@@ -2,7 +2,7 @@
 CREATE TABLE local_leaderboards (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  image_id UUID NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+  puzzle_id UUID NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE,
   best_time INTEGER NOT NULL, -- completion time in milliseconds
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
@@ -30,6 +30,6 @@ CREATE TRIGGER local_leaderboards_updated_at
 
 -- Add indexes
 CREATE INDEX local_leaderboards_user_id_idx ON local_leaderboards(user_id);
-CREATE INDEX local_leaderboards_image_id_idx ON local_leaderboards(image_id);
+CREATE INDEX local_leaderboards_puzzle_id_idx ON local_leaderboards(puzzle_id);
 CREATE INDEX local_leaderboards_best_time_idx ON local_leaderboards(best_time);
-CREATE UNIQUE INDEX local_leaderboards_user_image_unique ON local_leaderboards(user_id, image_id);
+CREATE UNIQUE INDEX local_leaderboards_user_puzzle_unique ON local_leaderboards(user_id, puzzle_id);

@@ -1,24 +1,24 @@
--- Create image_categories junction table
-CREATE TABLE image_categories (
+-- Create puzzle_categories junction table
+CREATE TABLE puzzle_categories (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  image_id UUID NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+  puzzle_id UUID NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE,
   category_id UUID NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- Enable RLS
-ALTER TABLE image_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE puzzle_categories ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies
-CREATE POLICY "Authenticated users can view image categories" ON image_categories
+CREATE POLICY "Authenticated users can view puzzle categories" ON puzzle_categories
   FOR SELECT TO authenticated
   USING (true);
 
-CREATE POLICY "Authenticated users can create image categories" ON image_categories
+CREATE POLICY "Authenticated users can create puzzle categories" ON puzzle_categories
   FOR INSERT TO authenticated
   WITH CHECK (true);
 
 -- Add indexes
-CREATE INDEX image_categories_image_id_idx ON image_categories(image_id);
-CREATE INDEX image_categories_category_id_idx ON image_categories(category_id);
-CREATE UNIQUE INDEX image_categories_image_category_unique ON image_categories(image_id, category_id);
+CREATE INDEX puzzle_categories_puzzle_id_idx ON puzzle_categories(puzzle_id);
+CREATE INDEX puzzle_categories_category_id_idx ON puzzle_categories(category_id);
+CREATE UNIQUE INDEX puzzle_categories_puzzle_category_unique ON puzzle_categories(puzzle_id, category_id);

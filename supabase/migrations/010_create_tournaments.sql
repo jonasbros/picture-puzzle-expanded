@@ -10,6 +10,7 @@ CREATE TABLE tournaments (
   format TEXT NOT NULL,
   is_open BOOLEAN DEFAULT true NOT NULL,
   is_subscribed_only BOOLEAN DEFAULT false NOT NULL,
+  closes_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   deleted_at TIMESTAMPTZ
@@ -39,4 +40,5 @@ CREATE TRIGGER tournaments_updated_at
 CREATE INDEX tournaments_organizer_id_idx ON tournaments(organizer_id);
 CREATE INDEX tournaments_name_idx ON tournaments(name);
 CREATE INDEX tournaments_is_open_idx ON tournaments(is_open);
+CREATE INDEX tournaments_closes_at_idx ON tournaments(closes_at);
 CREATE INDEX tournaments_created_at_idx ON tournaments(created_at);

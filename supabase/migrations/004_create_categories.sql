@@ -1,7 +1,7 @@
 -- Create categories table
 CREATE TABLE categories (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  image_id UUID NOT NULL, -- Note: Will be referenced later when images table is created
+  puzzle_id UUID NOT NULL, -- Note: Will be referenced later when puzzles table is created
   name TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
@@ -24,4 +24,4 @@ CREATE TRIGGER categories_updated_at
 
 -- Add indexes
 CREATE INDEX categories_name_idx ON categories(name);
-CREATE INDEX categories_image_id_idx ON categories(image_id);
+CREATE INDEX categories_puzzle_id_idx ON categories(puzzle_id);
