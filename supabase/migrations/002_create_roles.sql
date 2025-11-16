@@ -28,5 +28,6 @@ CREATE INDEX roles_name_idx ON roles(name);
 -- Insert default roles
 INSERT INTO roles (name, permissions) VALUES 
   ('admin', '{"all": true}'::jsonb),
-  ('user', '{"read": true, "create_puzzle": true}'::jsonb),
-  ('premium_user', '{"read": true, "create_puzzle": true, "premium_features": true}'::jsonb);
+  ('moderator', '{"all": true}'::jsonb),
+  ('user', '{"read": true}'::jsonb),
+  ('premium_user', '{"read": true, "premium_features": true}'::jsonb);
