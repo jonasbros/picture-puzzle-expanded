@@ -4,6 +4,8 @@ CREATE TABLE tournaments (
   organizer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   max_player_count INTEGER NOT NULL,
+  min_participant_mmr INTEGER DEFAULT 0,
+  max_participant_mmr INTEGER,
   bracket JSONB DEFAULT '{}',
   format TEXT NOT NULL,
   is_open BOOLEAN DEFAULT true NOT NULL,

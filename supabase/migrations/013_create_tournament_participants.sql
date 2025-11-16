@@ -3,6 +3,7 @@ CREATE TABLE tournament_participants (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   tournament_id UUID NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+  total_mmr_gained INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   deleted_at TIMESTAMPTZ
