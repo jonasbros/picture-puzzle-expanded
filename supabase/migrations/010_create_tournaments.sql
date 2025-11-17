@@ -42,3 +42,6 @@ CREATE INDEX tournaments_name_idx ON tournaments(name);
 CREATE INDEX tournaments_is_open_idx ON tournaments(is_open);
 CREATE INDEX tournaments_closes_at_idx ON tournaments(closes_at);
 CREATE INDEX tournaments_created_at_idx ON tournaments(created_at);
+
+-- Performance indexes
+CREATE INDEX tournaments_status_date_idx ON tournaments(is_open, created_at);

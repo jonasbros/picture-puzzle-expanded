@@ -67,6 +67,13 @@ CREATE INDEX friend_requests_requester_idx ON friend_requests(requester_id);
 CREATE INDEX friend_requests_recipient_idx ON friend_requests(recipient_id);
 CREATE INDEX friend_requests_status_idx ON friend_requests(status);
 
+-- Performance indexes
+CREATE INDEX friendships_user_created_idx ON friendships(user_id, created_at DESC);
+CREATE INDEX friendships_friend_created_idx ON friendships(friend_id, created_at DESC);
+CREATE INDEX friend_requests_recipient_status_idx ON friend_requests(recipient_id, status);
+CREATE INDEX friend_requests_requester_status_idx ON friend_requests(requester_id, status);
+CREATE INDEX friend_requests_status_created_idx ON friend_requests(status, created_at DESC);
+
 -- Function to automatically create friendship when request is accepted
 CREATE OR REPLACE FUNCTION handle_friend_request_accepted()
 RETURNS TRIGGER AS $$

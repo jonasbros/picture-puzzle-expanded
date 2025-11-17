@@ -36,6 +36,11 @@ CREATE INDEX notifications_type_idx ON notifications(type);
 CREATE INDEX notifications_created_at_idx ON notifications(created_at DESC);
 CREATE INDEX notifications_expires_at_idx ON notifications(expires_at) WHERE expires_at IS NOT NULL;
 
+-- Performance indexes
+CREATE INDEX notifications_user_type_idx ON notifications(user_id, type);
+CREATE INDEX notifications_user_created_idx ON notifications(user_id, created_at DESC);
+CREATE INDEX notifications_type_created_idx ON notifications(type, created_at DESC);
+
 -- Function to create notification
 CREATE OR REPLACE FUNCTION create_notification(
   p_user_id UUID,

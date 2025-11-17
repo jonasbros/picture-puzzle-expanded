@@ -42,3 +42,10 @@ CREATE INDEX game_sessions_puzzle_id_idx ON game_sessions(puzzle_id);
 CREATE INDEX game_sessions_tournament_id_idx ON game_sessions(tournament_id);
 CREATE INDEX game_sessions_is_finished_idx ON game_sessions(is_finished);
 CREATE INDEX game_sessions_created_at_idx ON game_sessions(created_at);
+
+-- Performance indexes
+CREATE INDEX game_sessions_user_created_idx ON game_sessions(user_id, created_at);
+CREATE INDEX game_sessions_puzzle_time_idx ON game_sessions(puzzle_id, time_remaining_ms);
+CREATE INDEX game_sessions_finished_mmr_idx ON game_sessions(is_finished, mmr_change);
+CREATE INDEX game_sessions_completion_idx ON game_sessions(completion_percentage DESC);
+CREATE INDEX game_sessions_difficulty_idx ON game_sessions(difficulty_level);

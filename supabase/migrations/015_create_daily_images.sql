@@ -17,3 +17,6 @@ CREATE POLICY "Authenticated users can view daily puzzles" ON daily_puzzles
 -- Add indexes
 CREATE INDEX daily_puzzles_puzzle_date_idx ON daily_puzzles(puzzle_date);
 CREATE INDEX daily_puzzles_puzzle_id_idx ON daily_puzzles(puzzle_id);
+
+-- Performance indexes
+CREATE INDEX daily_puzzles_date_desc_idx ON daily_puzzles(puzzle_date DESC);

@@ -27,6 +27,9 @@ CREATE TRIGGER puzzles_updated_at
 CREATE INDEX puzzles_title_idx ON puzzles(title);
 CREATE INDEX puzzles_created_at_idx ON puzzles(created_at);
 
+-- Performance indexes
+CREATE INDEX puzzles_deleted_at_idx ON puzzles(deleted_at) WHERE deleted_at IS NULL;
+
 -- Now add foreign key constraint to categories table
 ALTER TABLE categories
   ADD CONSTRAINT categories_puzzle_id_fkey

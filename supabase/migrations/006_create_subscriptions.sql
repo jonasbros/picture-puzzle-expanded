@@ -32,3 +32,4 @@ CREATE INDEX subscriptions_user_id_idx ON subscriptions(user_id);
 CREATE INDEX subscriptions_tier_id_idx ON subscriptions(tier_id);
 CREATE UNIQUE INDEX subscriptions_user_id_unique_active ON subscriptions(user_id) 
   WHERE deleted_at IS NULL;
+

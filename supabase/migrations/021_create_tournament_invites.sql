@@ -50,6 +50,12 @@ CREATE INDEX tournament_invites_invitee_id_idx ON tournament_invites(invitee_id)
 CREATE INDEX tournament_invites_status_idx ON tournament_invites(status);
 CREATE INDEX tournament_invites_expires_at_idx ON tournament_invites(expires_at);
 
+-- Performance indexes
+CREATE INDEX tournament_invites_tournament_status_idx ON tournament_invites(tournament_id, status);
+CREATE INDEX tournament_invites_invitee_status_idx ON tournament_invites(invitee_id, status);
+CREATE INDEX tournament_invites_status_expires_idx ON tournament_invites(status, expires_at) WHERE status = 'pending';
+CREATE INDEX tournament_invites_created_idx ON tournament_invites(created_at DESC);
+
 -- Function to handle tournament invite acceptance
 CREATE OR REPLACE FUNCTION handle_tournament_invite_accepted()
 RETURNS TRIGGER AS $$

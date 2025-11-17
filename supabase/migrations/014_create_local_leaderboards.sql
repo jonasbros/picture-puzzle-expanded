@@ -33,3 +33,6 @@ CREATE INDEX local_leaderboards_user_id_idx ON local_leaderboards(user_id);
 CREATE INDEX local_leaderboards_puzzle_id_idx ON local_leaderboards(puzzle_id);
 CREATE INDEX local_leaderboards_best_time_idx ON local_leaderboards(best_time);
 CREATE UNIQUE INDEX local_leaderboards_user_puzzle_unique ON local_leaderboards(user_id, puzzle_id);
+
+-- Performance indexes
+CREATE INDEX local_leaderboards_puzzle_time_idx ON local_leaderboards(puzzle_id, best_time);

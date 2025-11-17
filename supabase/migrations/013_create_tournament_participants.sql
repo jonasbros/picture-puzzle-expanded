@@ -34,3 +34,6 @@ CREATE INDEX tournament_participants_user_id_idx ON tournament_participants(user
 CREATE INDEX tournament_participants_tournament_id_idx ON tournament_participants(tournament_id);
 CREATE UNIQUE INDEX tournament_participants_user_tournament_unique ON tournament_participants(user_id, tournament_id)
   WHERE deleted_at IS NULL;
+
+-- Performance indexes
+CREATE INDEX tournament_participants_tournament_mmr_idx ON tournament_participants(tournament_id, total_mmr_gained);

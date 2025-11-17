@@ -32,3 +32,7 @@ CREATE TRIGGER leaderboards_updated_at
 CREATE INDEX leaderboards_user_id_idx ON leaderboards(user_id);
 CREATE INDEX leaderboards_mmr_idx ON leaderboards(mmr);
 CREATE INDEX leaderboards_created_at_idx ON leaderboards(created_at);
+
+-- Performance indexes
+CREATE INDEX leaderboards_mmr_created_idx ON leaderboards(mmr DESC, created_at);
+CREATE INDEX leaderboards_user_mmr_idx ON leaderboards(user_id, mmr DESC);
