@@ -4,6 +4,7 @@ CREATE TABLE local_leaderboards (
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   puzzle_id UUID NOT NULL REFERENCES puzzles(id) ON DELETE CASCADE,
   best_time INTEGER NOT NULL, -- completion time in milliseconds
+  progress_percentage TINYINT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
