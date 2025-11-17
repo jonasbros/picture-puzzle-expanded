@@ -8,6 +8,8 @@ Shuffled Picture Puzzle Game
 - User Profile
 - Rank badge/medals
 - Images used for puzzles will be curated from Pexels
+- Subscriptions = no ads, stats
+- Tournaments - only admins/mods can create first, later if ppl want they can create if highest tier sub
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
