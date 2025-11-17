@@ -25,7 +25,7 @@ CREATE POLICY "Tournament creators can send invites" ON tournament_invites
     inviter_id = auth.uid() AND
     EXISTS (
       SELECT 1 FROM tournaments 
-      WHERE id = tournament_id AND created_by = auth.uid()
+      WHERE id = tournament_id AND organizer_id = auth.uid()
     )
   );
 
