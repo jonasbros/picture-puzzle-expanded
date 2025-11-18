@@ -1,5 +1,11 @@
+import { LoginBtn } from "@/components/login/LoginBtn";
+
 const Login = () => {
-  return <main>Login</main>;
+  return (
+    <main>
+      <LoginBtn />
+    </main>
+  );
 };
 
 export default Login;
