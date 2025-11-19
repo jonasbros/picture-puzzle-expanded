@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { signOut } from "../lib/actions/auth";
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         onClick={async () => {
           "use server";
           signOut();
+          redirect("/login");
         }}
       >
         TEST
