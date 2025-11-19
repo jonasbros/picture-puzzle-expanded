@@ -1,11 +1,29 @@
 "use server";
 
-import * as supabaseAuth from "../services/supabase/auth";
+import authClient from "../services/auth/client";
 
-export async function signInWithProvider(provider: "google" | "github") {
-  await supabaseAuth.signInWithProvider(provider);
+const AUTH_CLIENT = "supabase";
+
+async function getClient() {
+  return await authClient(AUTH_CLIENT);
+}
+
+export async function signInWithProvider(provider: "google") {
+  const client = await getClient();
+  await client.signInWithProvider(provider);
 }
 
 export async function signOut() {
-  await supabaseAuth.signOut();
+  const client = await getClient();
+  await client.signOut();
+}
+
+export async function isLoggedIn() {
+  const client = await getClient();
+  return await client.isLoggedIn();
+}
+
+export async function getUser() {
+  const client = await getClient();
+  return await client.getUser();
 }

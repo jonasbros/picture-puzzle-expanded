@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { User } from "@supabase/supabase-js";
 
 export async function signInWithProvider(provider: "google" | "github") {
   const supabase = await createClient();
@@ -30,4 +31,21 @@ export async function signOut() {
   }
 
   redirect("/");
+}
+
+export async function isLoggedIn(): Promise<boolean> {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session !== null;
+}
+
+export async function getUser(): Promise<User | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user;
 }
