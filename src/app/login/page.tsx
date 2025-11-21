@@ -1,4 +1,4 @@
-import { LoginBtn } from "@/components/login/LoginBtn";
+import { LoginBtn } from "@/app/login/components/LoginBtn";
 
 const Login = () => {
   return (

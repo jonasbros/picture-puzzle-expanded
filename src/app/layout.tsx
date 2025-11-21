@@ -1,3 +1,5 @@
+import { NextIntlClientProvider } from "next-intl";
+
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import "./globals.css";
@@ -21,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${notoSans.variable} antialiased`}>
         <div className="flex min-h-screen items-center justify-center">
-          {children}
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
         </div>
       </body>
     </html>
