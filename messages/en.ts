@@ -1,4 +1,5 @@
 import homepage from "./en-includes/homepage";
+import dashboard from "./en-includes/dashboard";
 
 const messages = {
   common: {
@@ -7,6 +8,7 @@ const messages = {
     about: "About",
   },
   ...homepage,
+  ...dashboard,
 };
 
 export default messages;
