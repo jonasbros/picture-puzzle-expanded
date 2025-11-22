@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { User } from "@supabase/supabase-js";
 
-export async function signInWithProvider(provider: "google" | "github") {
+export async function signInWithProvider(
+  provider: "google" | "github"
+): Promise<void> {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
@@ -23,7 +25,7 @@ export async function signInWithProvider(provider: "google" | "github") {
   }
 }
 
-export async function signOut() {
+export async function signOut(): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {

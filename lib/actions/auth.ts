@@ -1,5 +1,6 @@
 "use server";
 
+import { User } from "@supabase/supabase-js";
 import authClient from "../services/auth/client";
 
 const AUTH_CLIENT = "supabase";
@@ -18,12 +19,12 @@ export async function signOut() {
   await client.signOut();
 }
 
-export async function isLoggedIn() {
+export async function isLoggedIn(): Promise<boolean> {
   const client = await getClient();
   return await client.isLoggedIn();
 }
 
-export async function getUser() {
+export async function getUser(): Promise<User | null> {
   const client = await getClient();
   return await client.getUser();
 }

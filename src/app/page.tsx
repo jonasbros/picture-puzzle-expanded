@@ -1,16 +1,11 @@
-import { useTranslations } from "next-intl";
+import PuzzleOfDay from "./components/PuzzleOfDay";
 
 export default function Home() {
-  const t = useTranslations();
-
   return (
     <main className="w-full h-screen pt-24 pb-16 px-16">
       <div className="bento-box container min-h-screen mx-auto text-base-content font-bold">
-        <div className="bento-box__area-1 bg-base-300 rounded-lg p-4">
-          <h1 className="text-2xl uppercase">
-            {t("dashboard.puzzle_of_the_day")}
-          </h1>
-        </div>
+        <PuzzleOfDay />
+
         <div className="bento-box__area-2 bg-base-300 rounded-lg p-4">
           PREVIOUS DAYS
         </div>
