@@ -6,7 +6,7 @@ export default function Home() {
   const t = useTranslations();
   return (
     <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-      {t("HomePage.title")}
+      {t("homepage.title")}
       <button
         className="btn btn-primary"
         onClick={async () => {
