@@ -1,6 +1,6 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/types/supabase";
-import { Puzzle } from "@/lib/types/puzzle";
+import { Puzzle, DailyPuzzle } from "@/lib/types/puzzle";
 import {
   CreatePuzzleInput,
   UpdatePuzzleInput,
@@ -15,6 +15,7 @@ export interface IPuzzleRepository {
   delete(id: string): Promise<void>;
   search(query: string): Promise<Puzzle[]>;
   getDailyPuzzle(): Promise<Puzzle | null>;
+  getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null>;
 }
 
 export class PuzzleRepository implements IPuzzleRepository {
@@ -147,5 +148,44 @@ export class PuzzleRepository implements IPuzzleRepository {
 
     // Extract puzzle data from the join
     return data?.puzzles as Puzzle;
+  }
+
+  async getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null> {
+    const { data, error } = await this.supabase
+      .from("daily_puzzles")
+      .select(
+        `
+        id,
+        puzzle_id,
+        puzzle_date,
+        created_at,
+        puzzles (
+          id,
+          title,
+          url,
+          attribution,
+          created_at,
+          updated_at,
+          deleted_at
+        )
+      `
+      )
+      .is("puzzles.deleted_at", null)
+      .order("puzzle_date", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") return null; // No rows returned
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      puzzle_id: data.puzzle_id,
+      puzzle_date: data.puzzle_date,
+      created_at: data.created_at,
+      puzzle: data.puzzles as Puzzle,
+    };
   }
 }

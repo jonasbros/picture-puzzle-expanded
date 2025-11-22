@@ -3,7 +3,7 @@ import PuzzleOfDay from "./components/PuzzleOfDay";
 export default function Home() {
   return (
     <main className="w-full h-screen pt-24 pb-16 px-16">
-      <div className="bento-box container min-h-screen mx-auto text-base-content font-bold">
+      <div className="bento-box container min-h-screen mx-auto text-base-content">
         <PuzzleOfDay />
 
         <div className="bento-box__area-2 bg-base-300 rounded-lg p-4">

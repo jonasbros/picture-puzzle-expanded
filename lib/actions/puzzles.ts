@@ -119,11 +119,29 @@ export async function getDailyPuzzle() {
 
     return { success: true, data: puzzle };
   } catch (error) {
-    console.error("Search puzzles error:", error);
+    console.error("Get daily puzzle error:", error);
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "Failed to search puzzles",
+        error instanceof Error ? error.message : "Failed to get daily puzzle",
+    };
+  }
+}
+
+export async function getDailyPuzzleWithCountdown() {
+  try {
+    const supabase = await createClient();
+    const puzzleService = createPuzzleService(supabase);
+
+    const dailyPuzzle = await puzzleService.getDailyPuzzleWithCountdown();
+
+    return { success: true, data: dailyPuzzle };
+  } catch (error) {
+    console.error("Get daily puzzle with countdown error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to get daily puzzle with countdown",
     };
   }
 }

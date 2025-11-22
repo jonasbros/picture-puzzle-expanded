@@ -1,13 +1,20 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 import ThemeSwitch from "./ThemeSwitch";
+import { signOut } from "@/lib/actions/auth";
 
 const GuestNavbar = () => {
   const t = useTranslations();
 
+  const handleLogout = async () => {
+    await signOut();
+  };
+
   return (
-    <div className="navbar bg-base-100 shadow-sm fixed">
+    <div className="navbar bg-base-100 shadow-sm fixed z-1">
       <div className="container flex mx-auto">
         <div className="flex-1">
           <Link href="/" className="btn btn-ghost text-xl">
@@ -23,7 +30,10 @@ const GuestNavbar = () => {
               <Link href="/login">{t("common.login")}</Link>
             </li>
             <li>
-              <ThemeSwitch size={6} />
+              <a onClick={() => handleLogout()}>{t("common.logout")}</a>
+            </li>
+            <li>
+              <ThemeSwitch />
             </li>
           </ul>
         </div>

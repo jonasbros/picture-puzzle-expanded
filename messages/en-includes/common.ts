@@ -2,6 +2,7 @@ const common = {
   common: {
     brand: "Skrambol",
     login: "Login",
+    logout: "Logout",
     about: "About",
   },
 };

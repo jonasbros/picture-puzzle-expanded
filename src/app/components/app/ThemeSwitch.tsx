@@ -6,7 +6,7 @@ const ThemeSwitch = ({ size = 10 }: { size?: number }) => {
 
       {/* sun icon */}
       <svg
-        className={`swap-on size-${size} fill-current`}
+        className={`swap-on size-6 fill-current`}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >
@@ -15,7 +15,7 @@ const ThemeSwitch = ({ size = 10 }: { size?: number }) => {
 
       {/* moon icon */}
       <svg
-        className={`swap-off size-${size} fill-current`}
+        className={`swap-off size-6 fill-current`}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
       >

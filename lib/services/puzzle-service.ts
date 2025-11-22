@@ -4,7 +4,7 @@ import {
   PuzzleRepository,
   IPuzzleRepository,
 } from "@/lib/repositories/puzzle-repository";
-import { Puzzle } from "@/lib/types/puzzle";
+import { Puzzle, DailyPuzzle } from "@/lib/types/puzzle";
 import {
   createPuzzleSchema,
   updatePuzzleSchema,
@@ -22,6 +22,7 @@ export interface IPuzzleService {
   deletePuzzle(id: string): Promise<void>;
   searchPuzzles(query: string): Promise<Puzzle[]>;
   getDailyPuzzle(): Promise<Puzzle | null>;
+  getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null>;
   validatePuzzleExists(id: string): Promise<Puzzle>;
 }
 
@@ -94,6 +95,10 @@ export class PuzzleService implements IPuzzleService {
 
   async getDailyPuzzle(): Promise<Puzzle | null> {
     return await this.repository.getDailyPuzzle();
+  }
+
+  async getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null> {
+    return await this.repository.getDailyPuzzleWithCountdown();
   }
 
   async validatePuzzleExists(id: string): Promise<Puzzle> {

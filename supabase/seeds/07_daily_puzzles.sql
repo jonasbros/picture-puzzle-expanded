@@ -1,9 +1,10 @@
--- Insert daily puzzles for the next week
+-- Insert daily puzzles for the next week with specific times
 WITH puzzle_ids AS (
   SELECT id FROM puzzles ORDER BY created_at LIMIT 4
 )
 INSERT INTO daily_puzzles (puzzle_id, puzzle_date)
 SELECT 
   id,
-  CURRENT_DATE + (row_number() OVER () - 1) * INTERVAL '1 day'
+  -- Set daily puzzles to release at midnight UTC
+  date_trunc('day', NOW()) + (row_number() OVER () - 1) * INTERVAL '1 day'
 FROM puzzle_ids;
