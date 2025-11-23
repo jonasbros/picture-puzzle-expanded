@@ -1,15 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
 
-import type { Puzzle } from "@/lib/types/puzzle";
+import type { Puzzle, Piece } from "@/lib/types/puzzle";
 import { generateGrid } from "@/lib/utils/puzzle-grid";
-
 import styles from "./Grid.module.css";
-
-type Piece = {
-  id: number;
-  position: number;
-  currentPosition: number;
-};
+import PuzzlePiece from "./PuzzlePiece";
 
 const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   const [pieces, setPieces] = useState<Piece[]>([]);
@@ -21,6 +24,11 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   const GRID_COLS = 16;
   const GRID_ROWS = 9;
   const TOTAL_PIECES = GRID_COLS * GRID_ROWS;
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
 
   // todo: create game session
 
@@ -35,21 +43,20 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
     setupGrid();
   }, [puzzle.id]); // Only re-run when puzzleId changes
 
-  function startDrag(
-    event: React.DragEvent<HTMLDivElement>,
-    draggedPiece: Piece
-  ) {
-    event.dataTransfer.dropEffect = "move";
-    event.dataTransfer.effectAllowed = "move";
-    event.dataTransfer.setData("draggedPiece", JSON.stringify(draggedPiece));
-  }
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
 
-  function onDrop(event: React.DragEvent<HTMLDivElement>, targetPiece: Piece) {
-    const draggedData = event.dataTransfer.getData("draggedPiece");
-    if (!draggedData) return;
+    if (!over) return;
 
-    const draggedPiece = JSON.parse(draggedData);
-    if (draggedPiece.id === targetPiece.id) return;
+    const draggedPieceId = active.id as number;
+    const targetPieceId = over.id as number;
+
+    if (draggedPieceId === targetPieceId) return;
+
+    const draggedPiece = pieces.find((p) => p.id === draggedPieceId);
+    const targetPiece = pieces.find((p) => p.id === targetPieceId);
+
+    if (!draggedPiece || !targetPiece) return;
 
     swapPositions(draggedPiece, targetPiece);
   }
@@ -70,6 +77,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
       if (result) {
         setIsWin(true);
         setIsGameOver(true);
+        alert(1);
       }
 
       return newPieces;
@@ -90,41 +98,25 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   function updateProgress() {}
 
   return (
-    <div
-      className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden`}
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
-        gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
-        aspectRatio: "16/9",
-      }}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
     >
-      {pieces.map((piece, gridIndex) => (
-        <div
-          key={gridIndex}
-          className={`${
-            piece
-              ? styles[`puzzle-piece__position-${piece.currentPosition}`]
-              : ""
-          } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%] text-black`}
-          style={{
-            minHeight: "20px",
-            backgroundImage: piece ? `url(${puzzle.url})` : "none",
-            backgroundColor: piece ? "transparent" : "#f0f0f0",
-          }}
-          draggable={piece ? "true" : "false"}
-          onDragStart={piece ? (event) => startDrag(event, piece) : undefined}
-          onDrop={(event) => {
-            event.preventDefault();
-            onDrop(event, piece);
-          }}
-          onDragEnter={(event) => event.preventDefault()}
-          onDragOver={(event) => event.preventDefault()}
-        >
-          {piece ? piece.currentPosition : ""}
-        </div>
-      ))}
-    </div>
+      <div
+        className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden`}
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
+          gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
+          aspectRatio: "16/9",
+        }}
+      >
+        {pieces.map((piece, gridIndex) => (
+          <PuzzlePiece key={gridIndex} piece={piece} puzzle={puzzle} />
+        ))}
+      </div>
+    </DndContext>
   );
 };
 

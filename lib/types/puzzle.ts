@@ -22,3 +22,9 @@ export interface SinglePuzzleResponse {
   data?: Puzzle;
   error?: string;
 }
+
+export type Piece = {
+  id: number;
+  position: number;
+  currentPosition: number;
+};
