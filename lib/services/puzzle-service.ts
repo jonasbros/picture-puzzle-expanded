@@ -17,6 +17,7 @@ import {
 export interface IPuzzleService {
   getAllPuzzles(filters?: PuzzleFilters): Promise<Puzzle[]>;
   getPuzzleById(id: string): Promise<Puzzle | null>;
+  getPuzzleBySlug(slug: string): Promise<Puzzle | null>;
   createPuzzle(data: CreatePuzzleInput): Promise<Puzzle>;
   updatePuzzle(id: string, data: UpdatePuzzleInput): Promise<Puzzle>;
   deletePuzzle(id: string): Promise<void>;
@@ -41,6 +42,11 @@ export class PuzzleService implements IPuzzleService {
   async getPuzzleById(id: string): Promise<Puzzle | null> {
     if (!id) throw new Error("Puzzle ID is required");
     return await this.repository.getById(id);
+  }
+
+  async getPuzzleBySlug(slug: string): Promise<Puzzle | null> {
+    if (!slug) throw new Error("Puzzle Slug is required");
+    return await this.repository.getBySlug(slug);
   }
 
   async createPuzzle(data: CreatePuzzleInput): Promise<Puzzle> {

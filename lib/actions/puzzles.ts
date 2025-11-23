@@ -141,7 +141,27 @@ export async function getDailyPuzzleWithCountdown() {
     return {
       success: false,
       error:
-        error instanceof Error ? error.message : "Failed to get daily puzzle with countdown",
+        error instanceof Error
+          ? error.message
+          : "Failed to get daily puzzle with countdown",
+    };
+  }
+}
+
+export async function getPuzzleBySlug(slug: string) {
+  try {
+    const supabase = await createClient();
+    const puzzleService = createPuzzleService(supabase);
+
+    const puzzle = await puzzleService.getPuzzleBySlug(slug);
+
+    return { success: true, data: puzzle };
+  } catch (error) {
+    console.error("Get puzzle by slug error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to get puzzle by slug",
     };
   }
 }

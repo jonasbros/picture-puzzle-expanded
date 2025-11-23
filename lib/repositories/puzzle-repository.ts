@@ -10,6 +10,7 @@ import {
 export interface IPuzzleRepository {
   getAll(filters?: PuzzleFilters): Promise<Puzzle[]>;
   getById(id: string): Promise<Puzzle | null>;
+  getBySlug(slug: string): Promise<Puzzle | null>;
   create(data: CreatePuzzleInput): Promise<Puzzle>;
   update(id: string, data: UpdatePuzzleInput): Promise<Puzzle>;
   delete(id: string): Promise<void>;
@@ -54,6 +55,22 @@ export class PuzzleRepository implements IPuzzleRepository {
       .from("puzzles")
       .select("*")
       .eq("id", id)
+      .is("deleted_at", null)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") return null; // No rows returned
+      throw error;
+    }
+
+    return data as Puzzle;
+  }
+
+  async getBySlug(slug: string): Promise<Puzzle | null> {
+    const { data, error } = await this.supabase
+      .from("puzzles")
+      .select("*")
+      .eq("slug", slug)
       .is("deleted_at", null)
       .single();
 
@@ -130,6 +147,7 @@ export class PuzzleRepository implements IPuzzleRepository {
           title,
           url,
           attribution,
+          slug,
           created_at,
           updated_at,
           deleted_at
@@ -164,6 +182,7 @@ export class PuzzleRepository implements IPuzzleRepository {
           title,
           url,
           attribution,
+          slug,
           created_at,
           updated_at,
           deleted_at

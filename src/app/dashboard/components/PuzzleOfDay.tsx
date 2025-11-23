@@ -27,7 +27,7 @@ const PuzzleOfDay = () => {
 
   return (
     <Link
-      href={`/puzzle/${dailyPuzzle.id}`}
+      href={`/puzzle/${dailyPuzzle.slug}`}
       className="bento-box__area-1 bg-base-300 rounded-lg p-4 shadow-md cursor-pointer transform transition-transform hover:scale-[1.02] hover:shadow-lg"
     >
       <h1 className="text-2xl font-bold uppercase mb-2">

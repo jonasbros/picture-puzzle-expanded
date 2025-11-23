@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import "./globals.css";
-import GuestNavbar from "./components/app/GuestNavbar";
+import GuestNavbar from "./components/base/GuestNavbar";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
