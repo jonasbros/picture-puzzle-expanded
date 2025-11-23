@@ -41,7 +41,7 @@ const Grid = ({
   return (
     <div
       ref={gridContainer}
-      className={`${styles.gridContainer} w-full mx-auto`}
+      className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden`}
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,

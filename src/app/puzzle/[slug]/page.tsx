@@ -29,7 +29,7 @@ const Puzzle = () => {
   if (errorMessage) return <div>Error: {errorMessage}</div>;
 
   return (
-    <main className="container h-screen mx-auto pt-24 pb-16 px-16">
+    <main className="container h-screen mx-auto pt-24 pb-16">
       <Grid puzzleId={puzzle.id} imageUrl={puzzle.url} />
     </main>
   );
