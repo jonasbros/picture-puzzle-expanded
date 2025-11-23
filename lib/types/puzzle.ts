@@ -3,6 +3,7 @@ export interface Puzzle {
   title: string;
   url: string;
   attribution: Record<string, string>;
+  slug: string;
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;

@@ -4,6 +4,7 @@ const common = {
     login: "Login",
     logout: "Logout",
     about: "About",
+    loading: "Loading...",
   },
 };
 
