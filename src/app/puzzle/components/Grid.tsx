@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+
+import type { Puzzle } from "@/lib/types/puzzle";
 import { generateGrid } from "@/lib/utils/puzzle-grid";
 
 import styles from "./Grid.module.css";
@@ -9,16 +11,9 @@ type Piece = {
   currentPosition: number;
 };
 
-const Grid = ({
-  puzzleId,
-  imageUrl,
-}: {
-  puzzleId: string;
-  imageUrl: string;
-}) => {
+const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   const [pieces, setPieces] = useState<Piece[]>([]);
   const [solution, setSolution] = useState<Piece[]>([]);
-  const gridContainer = useRef<HTMLDivElement>(null);
 
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)
   const GRID_COLS = 16;
@@ -36,11 +31,47 @@ const Grid = ({
     };
 
     setupGrid();
-  }, [puzzleId]); // Only re-run when puzzleId changes
+  }, [puzzle.id]); // Only re-run when puzzleId changes
+
+  function startDrag(
+    event: React.DragEvent<HTMLDivElement>,
+    draggedPiece: Piece
+  ) {
+    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("draggedPiece", JSON.stringify(draggedPiece));
+  }
+
+  function onDrop(event: React.DragEvent<HTMLDivElement>, targetPiece: Piece) {
+    const draggedData = event.dataTransfer.getData("draggedPiece");
+    if (!draggedData) return;
+
+    const draggedPiece = JSON.parse(draggedData);
+    if (draggedPiece.id === targetPiece.id) return;
+
+    swapPositions(draggedPiece, targetPiece);
+  }
+
+  function swapPositions(draggedPiece: Piece, targetPiece: Piece) {
+    setPieces((prev) => {
+      return prev.map((p) => {
+        if (p.id === draggedPiece.id) {
+          return { ...p, currentPosition: targetPiece.currentPosition };
+        }
+        if (p.id === targetPiece.id) {
+          return { ...p, currentPosition: draggedPiece.currentPosition };
+        }
+        return p;
+      });
+    });
+
+    checkWinCondition();
+  }
+
+  function checkWinCondition() {}
 
   return (
     <div
-      ref={gridContainer}
       className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden`}
       style={{
         display: "grid",
@@ -49,21 +80,31 @@ const Grid = ({
         aspectRatio: "16/9",
       }}
     >
-      {pieces &&
-        pieces.map((piece, index) => (
-          <div
-            key={index}
-            className={`${
-              styles[`puzzle-piece__position-${piece.currentPosition}`]
-            } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%]`}
-            style={{
-              minHeight: "20px",
-              backgroundImage: `url(${imageUrl})`,
-            }}
-          >
-            {piece ? `${piece.currentPosition}` : index}
-          </div>
-        ))}
+      {pieces.map((piece, gridIndex) => (
+        <div
+          key={gridIndex}
+          className={`${
+            piece
+              ? styles[`puzzle-piece__position-${piece.currentPosition}`]
+              : ""
+          } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%]`}
+          style={{
+            minHeight: "20px",
+            backgroundImage: piece ? `url(${puzzle.url})` : "none",
+            backgroundColor: piece ? "transparent" : "#f0f0f0",
+          }}
+          draggable={piece ? "true" : "false"}
+          onDragStart={piece ? (event) => startDrag(event, piece) : undefined}
+          onDrop={(event) => {
+            event.preventDefault();
+            onDrop(event, piece);
+          }}
+          onDragEnter={(event) => event.preventDefault()}
+          onDragOver={(event) => event.preventDefault()}
+        >
+          {piece ? piece.currentPosition : ""}
+        </div>
+      ))}
     </div>
   );
 };
