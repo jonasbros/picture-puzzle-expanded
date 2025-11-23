@@ -29,7 +29,7 @@ const PuzzlePiece = ({ piece, puzzle }: { piece: Piece; puzzle: Puzzle }) => {
       {...listeners}
       className={`${
         styles[`puzzle-piece__position-${piece.currentPosition}`]
-      } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%] text-black`}
+      } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%] text-black font-bold`}
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`

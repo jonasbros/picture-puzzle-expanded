@@ -19,6 +19,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   const [solution, setSolution] = useState<Piece[]>([]);
   const [isWin, setIsWin] = useState<boolean>(false);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)
   const GRID_COLS = 16;
@@ -73,6 +74,8 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
         return p;
       });
 
+      setProgress(getProgress(newPieces));
+
       const result = checkWinCondition(newPieces);
       if (result) {
         setIsWin(true);
@@ -95,7 +98,14 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
 
   function processWin() {}
 
-  function updateProgress() {}
+  function getProgress(currentPieces: Piece[]) {
+    const total = solution.length;
+    const correct = currentPieces.filter(
+      (p, i) => p.currentPosition === solution[i].currentPosition
+    ).length;
+
+    return (correct / total) * 100;
+  }
 
   return (
     <DndContext
@@ -103,6 +113,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
+      {progress.toFixed(2)}% completed
       <div
         className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden`}
         style={{
