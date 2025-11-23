@@ -14,6 +14,8 @@ type Piece = {
 const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   const [pieces, setPieces] = useState<Piece[]>([]);
   const [solution, setSolution] = useState<Piece[]>([]);
+  const [isWin, setIsWin] = useState<boolean>(false);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)
   const GRID_COLS = 16;
@@ -54,7 +56,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
 
   function swapPositions(draggedPiece: Piece, targetPiece: Piece) {
     setPieces((prev) => {
-      return prev.map((p) => {
+      const newPieces = prev.map((p) => {
         if (p.id === draggedPiece.id) {
           return { ...p, currentPosition: targetPiece.currentPosition };
         }
@@ -63,12 +65,29 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
         }
         return p;
       });
-    });
 
-    checkWinCondition();
+      const result = checkWinCondition(newPieces);
+      if (result) {
+        setIsWin(true);
+        setIsGameOver(true);
+      }
+
+      return newPieces;
+    });
   }
 
-  function checkWinCondition() {}
+  function checkWinCondition(piecesToCheck?: Piece[]): boolean {
+    const currentPieces = piecesToCheck || pieces;
+    if (currentPieces.length !== solution.length) return false;
+
+    return currentPieces.every(
+      (p, i) => p.currentPosition === solution[i].currentPosition
+    );
+  }
+
+  function processWin() {}
+
+  function updateProgress() {}
 
   return (
     <div
@@ -87,7 +106,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
             piece
               ? styles[`puzzle-piece__position-${piece.currentPosition}`]
               : ""
-          } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%]`}
+          } flex items-center justify-center text-xs font-mono hover:bg-pink-500 cursor-pointer transition-colors bg-size-[1600%_900%] text-black`}
           style={{
             minHeight: "20px",
             backgroundImage: piece ? `url(${puzzle.url})` : "none",
