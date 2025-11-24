@@ -27,7 +27,7 @@ const HomePuzzleOfDay = () => {
   return (
     <div className="block w-full h-fit bg-base-300 rounded-lg p-4 shadow-md">
       <h1 className="text-2xl font-bold uppercase mb-2">
-        {t("dashboard.puzzle_of_the_day")}
+        {t("dashboard.image_of_the_day")}
       </h1>
       <div className="relative w-full h-[300px] rounded-lg overflow-hidden mb-2">
         <Image

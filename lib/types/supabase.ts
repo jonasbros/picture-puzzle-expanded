@@ -281,7 +281,7 @@ export type Database = {
           mmr_change: number
           piece_positions: string
           puzzle_id: string
-          time_remaining_ms: number
+          time_spent_ms: number
           tournament_id: string | null
           updated_at: string
           user_id: string
@@ -298,7 +298,7 @@ export type Database = {
           mmr_change?: number
           piece_positions: string
           puzzle_id: string
-          time_remaining_ms: number
+          time_spent_ms: number
           tournament_id?: string | null
           updated_at?: string
           user_id: string
@@ -315,7 +315,7 @@ export type Database = {
           mmr_change?: number
           piece_positions?: string
           puzzle_id?: string
-          time_remaining_ms?: number
+          time_spent_ms?: number
           tournament_id?: string | null
           updated_at?: string
           user_id?: string
