@@ -38,9 +38,7 @@ const PuzzlePiece = ({ piece, puzzle }: { piece: Piece; puzzle: Puzzle }) => {
         backgroundImage: `url(${puzzle.url})`,
         backgroundColor: isOver ? "#ddd" : "transparent",
       }}
-    >
-      {piece.currentPosition}
-    </div>
+    ></div>
   );
 };
 

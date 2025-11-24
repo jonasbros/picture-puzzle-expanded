@@ -31,7 +31,7 @@ const Puzzle = () => {
   if (errorMessage) return <div>Error: {errorMessage}</div>;
 
   return (
-    <main className="container h-screen mx-auto pt-24 pb-16">
+    <main className="container h-full mx-auto pb-16">
       {/* TODO: TIMER AND PROGRESS */}
       <Grid puzzle={puzzle} />
       <div className="flex w-3/4 mt-4 mx-auto justify-between">

@@ -3,7 +3,8 @@ import { NextIntlClientProvider } from "next-intl";
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import "./globals.css";
-import GuestNavbar from "./components/base/GuestNavbar";
+import { useTranslations } from "next-intl";
+// import GuestNavbar from "./components/base/GuestNavbar";
 
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
@@ -20,12 +21,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const t = useTranslations();
+
   return (
     <html lang="en">
       <body className={`${notoSans.variable} antialiased`}>
         <NextIntlClientProvider>
-          <GuestNavbar />
-          <div className="flex min-h-screen items-center justify-center">
+          {/* <GuestNavbar /> */}
+          <div className="flex flex-col min-h-screen items-center justify-center">
+            <h1 className="text-4xl font-bold uppercase mt-16 mb-6">
+              {" "}
+              {t("common.brand")}
+            </h1>
             {children}
           </div>
         </NextIntlClientProvider>

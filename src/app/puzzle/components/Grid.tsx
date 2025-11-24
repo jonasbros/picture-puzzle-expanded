@@ -113,13 +113,6 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <div className="w-3/4 mx-auto">
-        <p>
-          DONT SHOW PROGRESSS, BRUTE FORCEABLE. TIMER = COUNT UP, score on time
-          spent, no lose scenario?
-        </p>
-        {progress.toFixed(2)}% completed
-      </div>
       <div
         className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
         style={{
