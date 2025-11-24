@@ -20,7 +20,7 @@ export interface LocalLeaderboard {
   user_id?: string | null; // Nullable for guest users
   name?: string | null; // Guest user name (arcade style)
   puzzle_id: string;
-  best_time: number; // completion time in milliseconds
+  spent_time_ms: number; // completion time in milliseconds
   progress_percentage: number;
   difficulty_level?: string | null;
   created_at: string;
@@ -43,7 +43,7 @@ export interface CreateLeaderboardInput {
 
 export interface CreateLocalLeaderboardInput {
   puzzle_id: string;
-  best_time: number;
+  spent_time_ms: number;
   progress_percentage: number;
   difficulty_level?: string;
   // Either user_id OR name must be provided, not both
@@ -61,7 +61,7 @@ export interface GuestLeaderboardEntry {
 export interface GuestLocalLeaderboardEntry {
   name: string;
   puzzle_id: string;
-  best_time: number;
+  spent_time_ms: number;
   progress_percentage: number;
   difficulty_level?: string;
 }

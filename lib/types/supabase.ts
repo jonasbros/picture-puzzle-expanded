@@ -387,35 +387,35 @@ export type Database = {
       }
       local_leaderboards: {
         Row: {
-          best_time: number
           created_at: string
           difficulty_level: string | null
           id: string
           name: string | null
           progress_percentage: number
           puzzle_id: string
+          spent_time_ms: number
           updated_at: string
           user_id: string | null
         }
         Insert: {
-          best_time: number
           created_at?: string
           difficulty_level?: string | null
           id?: string
           name?: string | null
           progress_percentage: number
           puzzle_id: string
+          spent_time_ms: number
           updated_at?: string
           user_id?: string | null
         }
         Update: {
-          best_time?: number
           created_at?: string
           difficulty_level?: string | null
           id?: string
           name?: string | null
           progress_percentage?: number
           puzzle_id?: string
+          spent_time_ms?: number
           updated_at?: string
           user_id?: string | null
         }
@@ -1123,10 +1123,12 @@ export type Database = {
           deleted_at: string | null
           email: string
           id: string
+          is_guest: boolean
           last_login: string | null
           preferences: Json | null
           updated_at: string
           username: string
+          username_duplicate: number
         }
         Insert: {
           avatar?: string | null
@@ -1134,10 +1136,12 @@ export type Database = {
           deleted_at?: string | null
           email: string
           id?: string
+          is_guest?: boolean
           last_login?: string | null
           preferences?: Json | null
           updated_at?: string
           username: string
+          username_duplicate?: number
         }
         Update: {
           avatar?: string | null
@@ -1145,10 +1149,12 @@ export type Database = {
           deleted_at?: string | null
           email?: string
           id?: string
+          is_guest?: boolean
           last_login?: string | null
           preferences?: Json | null
           updated_at?: string
           username?: string
+          username_duplicate?: number
         }
         Relationships: []
       }
@@ -1198,6 +1204,10 @@ export type Database = {
           user_id: string
           username: string
         }[]
+      }
+      get_next_username_duplicate: {
+        Args: { p_username: string }
+        Returns: number
       }
       get_recommended_puzzles: {
         Args: {
