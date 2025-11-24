@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import "./globals.css";
 
+import ThemeSwitch from "./components/base/ThemeSwitch";
 // import GuestNavbar from "./components/base/GuestNavbar";
 
 const notoSans = Noto_Sans({
@@ -29,6 +30,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${notoSans.variable} antialiased`}>
         <NextIntlClientProvider>
+          <div className="fixed top-6 right-6 flex gap-4">
+            <span title="Coming Soon!" className="cursor-pointer">
+              {t("puzzle.leaderboards")}
+            </span>
+            <ThemeSwitch />
+          </div>
+
           {/* <GuestNavbar /> */}
           <div className="flex flex-col h-screen items-center justify-center">
             <Link href="/">

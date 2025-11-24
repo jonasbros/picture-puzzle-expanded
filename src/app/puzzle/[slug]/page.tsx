@@ -10,6 +10,7 @@ import { getPuzzleBySlug } from "@/lib/actions/puzzles";
 import type { Puzzle } from "@/lib/types/puzzle";
 
 import Grid from "@/src/app/puzzle/components/Grid";
+import OriginalImageModal from "@/src/app/puzzle/components/OriginalImageModal";
 
 const START_TIME = Date.now();
 
@@ -43,6 +44,11 @@ const Puzzle = () => {
     return () => clearInterval(timer);
   }, []);
 
+  function handleRestart() {
+    // Simply reload the page to restart the puzzle
+    window.location.reload();
+  }
+
   if (!puzzle)
     return (
       <main className="container h-full mx-auto pb-16 text-center">
@@ -67,13 +73,27 @@ const Puzzle = () => {
           <p>{puzzle.attribution.source}</p>
         </div>
 
-        <div>
-          <span className="font-bold mr-4">{`${t("puzzle.time_spent")} - ${dayjs
+        <div className="flex gap-2 items-center h-fit">
+          <span className="font-bold">{`${t("puzzle.time_spent")} - ${dayjs
             .duration(timeSpent)
             .format("HH:mm:ss.SSS")}`}</span>
-          <button className="btn btn-primary uppercase transform transition-transform hover:scale-105">
-            {t("puzzle.restart")}
-          </button>
+          <OriginalImageModal imageUrl={puzzle.url} altText={puzzle.title} />
+
+          <div className="dropdown dropdown-top dropdown-end">
+            <button className="btn btn-primary uppercase transform transition-transform hover:scale-105">
+              {t("puzzle.restart")}
+            </button>
+            <ul
+              tabIndex={-1}
+              className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 p-2 shadow-sm"
+            >
+              <li>
+                <button className="text-error" onClick={() => handleRestart()}>
+                  {t("puzzle.are_you_sure")}
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </main>
