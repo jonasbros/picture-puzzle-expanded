@@ -59,7 +59,9 @@ export async function createGameSession(
 /**
  * Get game session by ID
  */
-export async function getGameSession(id: string): Promise<ActionResult<GameSession | null>> {
+export async function getGameSession(
+  id: string
+): Promise<ActionResult<GameSession | null>> {
   try {
     const supabase = await createClient();
     const service = new GameSessionService(supabase);
@@ -128,9 +130,6 @@ export async function updateGameSessionProgress(
     const service = new GameSessionService(supabase);
 
     const session = await service.updateProgress(sessionId, input);
-
-    // Don't revalidate on every progress update for performance
-    // revalidatePath("/puzzle");
 
     return {
       success: true,
@@ -299,7 +298,11 @@ export async function getUserCompletedSessions(
 export async function getPuzzleLeaderboard(
   puzzleId: string,
   limit: number = 10
-): Promise<ActionResult<(GameSession & { user: { username: string; avatar: string | null } })[]>> {
+): Promise<
+  ActionResult<
+    (GameSession & { user: { username: string; avatar: string | null } })[]
+  >
+> {
   try {
     const supabase = await createClient();
     const service = new GameSessionService(supabase);
@@ -323,14 +326,14 @@ export async function getPuzzleLeaderboard(
 /**
  * Get user game session statistics
  */
-export async function getUserGameStats(
-  userId: string
-): Promise<ActionResult<{
-  totalSessions: number;
-  completedSessions: number;
-  averageTime: number | null;
-  bestTime: number | null;
-}>> {
+export async function getUserGameStats(userId: string): Promise<
+  ActionResult<{
+    totalSessions: number;
+    completedSessions: number;
+    averageTime: number | null;
+    bestTime: number | null;
+  }>
+> {
   try {
     const supabase = await createClient();
     const service = new GameSessionService(supabase);
