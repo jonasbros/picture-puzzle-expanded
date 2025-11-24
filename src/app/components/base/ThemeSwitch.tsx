@@ -2,7 +2,7 @@ const ThemeSwitch = ({ size = 10 }: { size?: number }) => {
   return (
     <label className="swap swap-rotate">
       {/* this hidden checkbox controls the state */}
-      <input type="checkbox" className="theme-controller" value="retro" />
+      <input type="checkbox" className="theme-controller" value="nord" />
 
       {/* sun icon */}
       <svg
