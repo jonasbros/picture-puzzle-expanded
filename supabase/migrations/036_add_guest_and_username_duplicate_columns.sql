@@ -15,8 +15,21 @@ ALTER TABLE users
   ADD CONSTRAINT users_username_duplicate_unique UNIQUE (username, username_duplicate);
 
 -- Remove the old unique constraint on username only since we now allow duplicates with different numbers
-ALTER TABLE users 
-  DROP CONSTRAINT users_username_unique;
+-- PostgreSQL auto-generated the constraint name, so we need to find it first
+DO $$
+DECLARE
+    constraint_name TEXT;
+BEGIN
+    SELECT con.conname INTO constraint_name
+    FROM pg_constraint con
+    INNER JOIN pg_class rel ON rel.oid = con.conrelid
+    INNER JOIN pg_attribute att ON att.attrelid = con.conrelid AND att.attnum = ANY(con.conkey)
+    WHERE rel.relname = 'users' AND att.attname = 'username' AND con.contype = 'u';
+    
+    IF constraint_name IS NOT NULL THEN
+        EXECUTE 'ALTER TABLE users DROP CONSTRAINT ' || constraint_name;
+    END IF;
+END $$;
 
 -- Add comment explaining the username_duplicate field
 COMMENT ON COLUMN users.username_duplicate IS 'Number suffix for duplicate usernames, displayed as username#0001';
