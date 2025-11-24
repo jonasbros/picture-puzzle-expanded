@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/core";
 
 import type { Puzzle, Piece } from "@/lib/types/puzzle";
-import { generateGrid } from "@/lib/utils/puzzle-grid";
+import { generateGrid, getProgress } from "@/lib/utils/puzzle-grid";
 import styles from "./Grid.module.css";
 import PuzzlePiece from "./PuzzlePiece";
 
@@ -24,7 +24,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)
   const GRID_COLS = 16;
   const GRID_ROWS = 9;
-  const TOTAL_PIECES = GRID_COLS * GRID_ROWS;
+  const TOTAL_PIECES = Math.floor(GRID_COLS * GRID_ROWS);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -42,7 +42,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
     };
 
     setupGrid();
-  }, [puzzle.id]); // Only re-run when puzzleId changes
+  }, [puzzle.id]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -74,7 +74,7 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
         return p;
       });
 
-      setProgress(getProgress(newPieces));
+      setProgress(getProgress(newPieces, solution));
 
       const result = checkWinCondition(newPieces);
       if (result) {
@@ -97,15 +97,6 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
   }
 
   function processWin() {}
-
-  function getProgress(currentPieces: Piece[]) {
-    const total = solution.length;
-    const correct = currentPieces.filter(
-      (p, i) => p.currentPosition === solution[i].currentPosition
-    ).length;
-
-    return (correct / total) * 100;
-  }
 
   return (
     <DndContext

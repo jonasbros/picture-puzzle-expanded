@@ -2,8 +2,10 @@ import { NextIntlClientProvider } from "next-intl";
 
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
-import "./globals.css";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import "./globals.css";
+
 // import GuestNavbar from "./components/base/GuestNavbar";
 
 const notoSans = Noto_Sans({
@@ -28,11 +30,13 @@ export default function RootLayout({
       <body className={`${notoSans.variable} antialiased`}>
         <NextIntlClientProvider>
           {/* <GuestNavbar /> */}
-          <div className="flex flex-col min-h-screen items-center justify-center">
-            <h1 className="text-4xl font-bold uppercase mt-16 mb-6">
-              {" "}
-              {t("common.brand")}
-            </h1>
+          <div className="flex flex-col h-screen items-center justify-center">
+            <Link href="/">
+              <h1 className="text-4xl font-bold uppercase mt-16 mb-6">
+                {t("common.brand")}
+              </h1>
+            </Link>
+
             {children}
           </div>
         </NextIntlClientProvider>

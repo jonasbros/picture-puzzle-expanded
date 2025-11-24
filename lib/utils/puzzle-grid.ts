@@ -1,8 +1,10 @@
+import type { Piece } from "@/lib/types/puzzle";
+
 export function generateGrid(size: number = 16) {
   const pieces = [];
   for (let i = 1; i <= size; i++) {
     pieces.push({
-      id: i,
+      id: crypto.randomUUID(),
       position: i,
       currentPosition: i,
     });
@@ -12,6 +14,15 @@ export function generateGrid(size: number = 16) {
     pieces: shufflePieces(pieces, size),
     solution: pieces,
   };
+}
+
+export function getProgress(currentPieces: Piece[], solution: Piece[]) {
+  const total = solution.length;
+  const correct = currentPieces.filter(
+    (p, i) => p.currentPosition === solution[i].currentPosition
+  ).length;
+
+  return (correct / total) * 100;
 }
 
 function shufflePieces(pieces: Array<object>, size: number) {
