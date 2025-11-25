@@ -15,7 +15,7 @@ export class UserRepository implements IUserRepository {
     const { data: user, error } = await this.supabase
       .from("users")
       .insert({
-        email: data.email,
+        email: data.email || null,
         username: data.username,
         is_guest: data.is_guest || false,
         username_duplicate: data.username_duplicate || 0,

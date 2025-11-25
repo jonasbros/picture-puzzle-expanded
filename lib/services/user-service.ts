@@ -27,21 +27,23 @@ export class UserService implements IUserService {
   async createUser(data: CreateUserInput): Promise<User> {
     const validatedData = createUserSchema.parse(data);
 
-    // Business logic: Check for duplicate email
-    const { data: existingUser, error } = await this.supabase
-      .from("users")
-      .select("id")
-      .eq("email", validatedData.email)
-      .is("deleted_at", null)
-      .single();
+    // Business logic: Check for duplicate email (only if email is provided)
+    if (validatedData.email) {
+      const { data: existingUser, error } = await this.supabase
+        .from("users")
+        .select("id")
+        .eq("email", validatedData.email)
+        .is("deleted_at", null)
+        .single();
 
-    if (existingUser) {
-      throw new Error("A user with this email already exists");
-    }
+      if (existingUser) {
+        throw new Error("A user with this email already exists");
+      }
 
-    // If error is not "no rows found", throw it
-    if (error && error.code !== "PGRST116") {
-      throw error;
+      // If error is not "no rows found", throw it
+      if (error && error.code !== "PGRST116") {
+        throw error;
+      }
     }
 
     return await this.repository.create(validatedData);
