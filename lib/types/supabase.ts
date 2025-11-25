@@ -1121,7 +1121,7 @@ export type Database = {
           avatar: string | null
           created_at: string
           deleted_at: string | null
-          email: string
+          email: string | null
           id: string
           is_guest: boolean
           last_login: string | null
@@ -1134,7 +1134,7 @@ export type Database = {
           avatar?: string | null
           created_at?: string
           deleted_at?: string | null
-          email: string
+          email?: string | null
           id?: string
           is_guest?: boolean
           last_login?: string | null
@@ -1147,7 +1147,7 @@ export type Database = {
           avatar?: string | null
           created_at?: string
           deleted_at?: string | null
-          email?: string
+          email?: string | null
           id?: string
           is_guest?: boolean
           last_login?: string | null
