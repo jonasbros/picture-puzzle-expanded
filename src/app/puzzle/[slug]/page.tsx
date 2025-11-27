@@ -1,32 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
+import dayjs from "@/lib/utils/dayjs";
 
 import { getPuzzleBySlug } from "@/lib/actions/puzzles";
 import type { Puzzle } from "@/lib/types/puzzle";
 
+import usePuzzleStore from "@/lib/stores/puzzle-store";
+
+import {
+  createGameSession,
+  updateGameSession,
+  completeGameSession,
+  abandonGameSession,
+} from "@/lib/actions/game-sessions";
+
 import Grid from "@/src/app/puzzle/components/Grid";
 import OriginalImageModal from "@/src/app/puzzle/components/OriginalImageModal";
-
-const START_TIME = Date.now();
 
 const Puzzle = () => {
   const t = useTranslations();
   const { slug } = useParams();
-  const [puzzle, setPuzzle] = useState<Puzzle | null | undefined>();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [timeSpent, setTimeSpent] = useState<number>(0);
-
-  dayjs.extend(duration);
+  const puzzle = usePuzzleStore((state) => state.puzzle);
+  const timeSpent = usePuzzleStore((state) => state.timeSpent);
+  const isWin = usePuzzleStore((state) => state.isWin);
+  const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
+  const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
+  const setTimeSpentItervalId = usePuzzleStore(
+    (state) => state.setTimeSpentItervalId
+  );
 
   useEffect(() => {
     const search = async () => {
       const { success, data, error } = await getPuzzleBySlug(slug as string);
-      if (success) {
+      if (success && data) {
         setPuzzle(data);
       } else {
         setErrorMessage(error || "");
@@ -34,14 +44,26 @@ const Puzzle = () => {
     };
 
     search();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const START_TIME = Date.now();
+    const timeSpentInterval = setInterval(() => {
       setTimeSpent(Date.now() - START_TIME);
     }, 100);
 
-    return () => clearInterval(timer);
+    setTimeSpentItervalId(timeSpentInterval);
+
+    return () => {
+      setTimeSpent(0);
+
+      if (timeSpentInterval) {
+        clearInterval(timeSpentInterval);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleRestart() {
@@ -64,8 +86,8 @@ const Puzzle = () => {
 
   return (
     <main className="container h-full mx-auto pb-16">
-      {/* TODO: TIMER AND PROGRESS */}
-      <Grid puzzle={puzzle} />
+      <Grid />
+
       <div className="flex w-3/4 mt-4 mx-auto justify-between">
         <div>
           <h2 className="text-xl font-bold">{puzzle.title}</h2>
@@ -81,7 +103,7 @@ const Puzzle = () => {
 
           <div className="dropdown dropdown-top dropdown-end">
             <button className="btn btn-primary uppercase transform transition-transform hover:scale-105">
-              {t("puzzle.restart")}
+              {isWin ? t("puzzle.new_game") : t("puzzle.restart")}
             </button>
             <ul
               tabIndex={-1}

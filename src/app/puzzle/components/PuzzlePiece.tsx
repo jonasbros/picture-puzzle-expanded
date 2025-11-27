@@ -1,8 +1,9 @@
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import styles from "./Grid.module.css";
-import type { Puzzle, Piece } from "@/lib/types/puzzle";
+import type { Piece } from "@/lib/types/puzzle";
+import usePuzzleStore from "@/lib/stores/puzzle-store";
 
-const PuzzlePiece = ({ piece, puzzle }: { piece: Piece; puzzle: Puzzle }) => {
+const PuzzlePiece = ({ piece }: { piece: Piece }) => {
   const {
     attributes,
     listeners,
@@ -22,20 +23,24 @@ const PuzzlePiece = ({ piece, puzzle }: { piece: Piece; puzzle: Puzzle }) => {
     setDropRef(el);
   };
 
+  const puzzle = usePuzzleStore((state) => state.puzzle);
+  const isWin = usePuzzleStore((state) => state.isWin);
+
   return (
     <div
       ref={combinedRef}
       {...attributes}
       {...listeners}
-      className={`${
-        styles[`puzzle-piece__position-${piece.currentPosition}`]
-      } flex items-center justify-center text-xs font-mono cursor-pointer bg-size-[1600%_900%] text-black font-bold border-[0.5px] border-base-content`}
+      className={`
+      ${styles[`puzzle-piece__position-${piece.currentPosition}`]} 
+      ${!isWin && "border-[0.5]"}
+      flex items-center justify-center text-xs font-mono cursor-pointer bg-size-[1600%_900%] text-black font-bold border-base-content`}
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined,
         minHeight: "20px",
-        backgroundImage: `url(${puzzle.url})`,
+        backgroundImage: `url(${puzzle && puzzle.url})`,
         backgroundColor: isOver ? "#ddd" : "transparent",
       }}
     ></div>

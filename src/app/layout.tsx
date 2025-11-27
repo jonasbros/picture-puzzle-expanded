@@ -31,9 +31,9 @@ export default function RootLayout({
       <body className={`${notoSans.variable} antialiased`}>
         <NextIntlClientProvider>
           <div className="fixed top-6 right-6 flex gap-4">
-            <span title="Coming Soon!" className="cursor-pointer">
+            {/* <span title="Coming Soon!" className="cursor-pointer">
               {t("puzzle.leaderboards")}
-            </span>
+            </span> */}
             <ThemeSwitch />
           </div>
 

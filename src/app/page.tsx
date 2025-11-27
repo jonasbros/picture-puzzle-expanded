@@ -3,8 +3,8 @@ import HomePuzzleOfDay from "./components/HomePuzzleOfDay";
 
 export default function Home() {
   return (
-    <main className="container h-screen pb-16 px-16">
-      <div className="w-1/2 min-h-screen mx-auto">
+    <main className="container h-full mx-auto pb-16">
+      <div className="flex w-1/2 mt-4 mx-auto justify-between">
         <Suspense
           fallback={<div>LOADING -- make skeleton component later</div>}
         >

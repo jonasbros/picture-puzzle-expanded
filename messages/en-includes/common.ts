@@ -5,6 +5,8 @@ const common = {
     logout: "Logout",
     about: "About",
     loading: "Loading...",
+    username: "Username",
+    submit: "Submit",
   },
 };
 

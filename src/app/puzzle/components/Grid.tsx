@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
+import Image from "next/image";
+
 import {
   DndContext,
   closestCenter,
@@ -13,18 +15,28 @@ import type { Puzzle, Piece } from "@/lib/types/puzzle";
 import { generateGrid, getProgress } from "@/lib/utils/puzzle-grid";
 import styles from "./Grid.module.css";
 import PuzzlePiece from "./PuzzlePiece";
+import PostGameModal from "../components/PostGameModal";
 
-const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
-  const [pieces, setPieces] = useState<Piece[]>([]);
-  const [solution, setSolution] = useState<Piece[]>([]);
-  const [isWin, setIsWin] = useState<boolean>(false);
-  const [isGameOver, setIsGameOver] = useState<boolean>(false);
-  const [progress, setProgress] = useState<number>(0);
+import usePuzzleStore from "@/lib/stores/puzzle-store";
 
-  // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)
+const Grid = () => {
+  // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e
   const GRID_COLS = 16;
   const GRID_ROWS = 9;
   const TOTAL_PIECES = Math.floor(GRID_COLS * GRID_ROWS);
+
+  const [pieces, setPieces] = useState<Piece[]>([]);
+  const [solution, setSolution] = useState<Piece[]>([]);
+
+  const puzzle = usePuzzleStore((state) => state.puzzle);
+  const timeSpent = usePuzzleStore((state) => state.timeSpent);
+  const isWin = usePuzzleStore((state) => state.isWin);
+  const setIsWin = usePuzzleStore((state) => state.setIsWin);
+  const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
+  const setFinalTimeSpent = usePuzzleStore((state) => state.setFinalTimeSpent);
+  const timeSpentItervalId = usePuzzleStore(
+    (state) => state.timeSpentItervalId
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -37,20 +49,35 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
     const setupGrid = () => {
       const { pieces: _pieces, solution: _solution } =
         generateGrid(TOTAL_PIECES);
-      setPieces(_pieces as Piece[]);
+
+      const _solutionCopy = [..._solution]; /// temporary for testing purposes
+      _solutionCopy[0] = {
+        id: crypto.randomUUID(),
+        position: 1,
+        currentPosition: 2,
+      };
+
+      _solutionCopy[1] = {
+        id: crypto.randomUUID(),
+        position: 2,
+        currentPosition: 1,
+      };
+
+      setPieces(_solutionCopy as Piece[]); // temp
       setSolution(_solution as Piece[]);
     };
 
     setupGrid();
-  }, [puzzle.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (!over) return;
 
-    const draggedPieceId = active.id as number;
-    const targetPieceId = over.id as number;
+    const draggedPieceId = active.id as string;
+    const targetPieceId = over.id as string;
 
     if (draggedPieceId === targetPieceId) return;
 
@@ -74,18 +101,20 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
         return p;
       });
 
-      setProgress(getProgress(newPieces, solution));
-
-      const result = checkWinCondition(newPieces);
-      if (result) {
-        setIsWin(true);
-        setIsGameOver(true);
-        alert(1);
-      }
-
       return newPieces;
     });
   }
+
+  useEffect(() => {
+    if (pieces.length > 0) {
+      const result = checkWinCondition();
+      if (result && !isWin) {
+        handleWin();
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pieces]);
 
   function checkWinCondition(piecesToCheck?: Piece[]): boolean {
     const currentPieces = piecesToCheck || pieces;
@@ -96,28 +125,38 @@ const Grid = ({ puzzle }: { puzzle: Puzzle }) => {
     );
   }
 
-  function processWin() {}
+  function handleWin() {
+    setFinalTimeSpent(timeSpent);
+    clearInterval(timeSpentItervalId as NodeJS.Timeout);
+
+    setTimeout(() => {
+      setIsWin(true);
+    }, 500);
+  }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <div
-        className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
-          gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
-          aspectRatio: "16/9",
-        }}
+    <>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
       >
-        {pieces.map((piece, gridIndex) => (
-          <PuzzlePiece key={gridIndex} piece={piece} puzzle={puzzle} />
-        ))}
-      </div>
-    </DndContext>
+        <div
+          className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
+            gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
+            aspectRatio: "16/9",
+          }}
+        >
+          {pieces.map((piece, gridIndex) => (
+            <PuzzlePiece key={gridIndex} piece={piece} />
+          ))}
+        </div>
+      </DndContext>
+      <PostGameModal isOpen={isWin} piecePositions={JSON.stringify(pieces)} />
+    </>
   );
 };
 
