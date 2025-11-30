@@ -14,6 +14,11 @@ export async function signInWithProvider(provider: "google") {
   await client.signInWithProvider(provider);
 }
 
+export async function signInAnonymously() {
+  const client = await getClient();
+  return await client.signInAnonymously();
+}
+
 export async function signOut() {
   const client = await getClient();
   await client.signOut();
