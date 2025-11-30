@@ -10,12 +10,12 @@ CREATE TABLE puzzles (
 );
 
 -- Enable RLS
-ALTER TABLE puzzles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.puzzles ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies (read-only for authenticated users)
-CREATE POLICY "Authenticated users can view puzzles" ON puzzles
-  FOR SELECT TO authenticated
-  USING (true);
+-- Create RLS policies (read-only for everyone - puzzles are public content)
+CREATE POLICY "Anyone can view puzzles" ON puzzles
+  FOR SELECT TO anon, authenticated
+  USING (deleted_at IS NULL);
 
 -- Create updated_at trigger
 CREATE TRIGGER puzzles_updated_at

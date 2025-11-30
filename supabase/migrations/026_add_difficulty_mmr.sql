@@ -44,7 +44,7 @@ END $$;
 ALTER TABLE local_leaderboards ADD CONSTRAINT local_leaderboards_puzzle_user_difficulty_unique UNIQUE (puzzle_id, user_id, difficulty_level);
 
 -- Add indexes for local leaderboards by difficulty
-CREATE INDEX IF NOT EXISTS local_leaderboards_puzzle_difficulty_time_idx ON local_leaderboards(puzzle_id, difficulty_level, best_time);
+CREATE INDEX IF NOT EXISTS local_leaderboards_puzzle_difficulty_time_idx ON local_leaderboards(puzzle_id, difficulty_level, spent_time_ms);
 
 -- Function to get leaderboard by difficulty
 CREATE OR REPLACE FUNCTION get_leaderboard_by_difficulty(

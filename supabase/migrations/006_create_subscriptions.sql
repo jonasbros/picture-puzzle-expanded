@@ -9,7 +9,7 @@ CREATE TABLE subscriptions (
 );
 
 -- Enable RLS
-ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Create RLS policies
 CREATE POLICY "Users can view their own subscriptions" ON subscriptions

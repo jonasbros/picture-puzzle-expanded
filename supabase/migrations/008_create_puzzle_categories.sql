@@ -7,13 +7,14 @@ CREATE TABLE puzzle_categories (
 );
 
 -- Enable RLS
-ALTER TABLE puzzle_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.puzzle_categories ENABLE ROW LEVEL SECURITY;
 
--- Create RLS policies
-CREATE POLICY "Authenticated users can view puzzle categories" ON puzzle_categories
-  FOR SELECT TO authenticated
+-- Create RLS policies (puzzle categories are public reference data)
+CREATE POLICY "Anyone can view puzzle categories" ON puzzle_categories
+  FOR SELECT TO anon, authenticated
   USING (true);
 
+-- Only admins should create puzzle categories (restrict this in app logic)
 CREATE POLICY "Authenticated users can create puzzle categories" ON puzzle_categories
   FOR INSERT TO authenticated
   WITH CHECK (true);
