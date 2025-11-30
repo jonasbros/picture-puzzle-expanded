@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 import {
@@ -25,25 +25,24 @@ const Grid = () => {
   const GRID_ROWS = 9;
   const TOTAL_PIECES = Math.floor(GRID_COLS * GRID_ROWS);
 
-  const [pieces, setPieces] = useState<Piece[]>([]);
-  const [solution, setSolution] = useState<Piece[]>([]);
-
-  const puzzle = usePuzzleStore((state) => state.puzzle);
+  const pieces = usePuzzleStore((state) => state.pieces);
+  const solution = usePuzzleStore((state) => state.solution);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
   const isWin = usePuzzleStore((state) => state.isWin);
-  const setIsWin = usePuzzleStore((state) => state.setIsWin);
-  const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
-  const setFinalTimeSpent = usePuzzleStore((state) => state.setFinalTimeSpent);
   const timeSpentItervalId = usePuzzleStore(
     (state) => state.timeSpentItervalId
   );
 
+  const setPieces = usePuzzleStore((state) => state.setPieces);
+  const setSolution = usePuzzleStore((state) => state.setSolution);
+  const setIsWin = usePuzzleStore((state) => state.setIsWin);
+  const setFinalTimeSpent = usePuzzleStore((state) => state.setFinalTimeSpent);
+
+  // dndkit
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
-
-  // todo: create game session
 
   useEffect(() => {
     const setupGrid = () => {
@@ -63,13 +62,24 @@ const Grid = () => {
         currentPosition: 1,
       };
 
-      setPieces(_solutionCopy as Piece[]); // temp
-      setSolution(_solution as Piece[]);
+      setPieces(_solutionCopy); // temp
+      setSolution(_solution);
     };
 
     setupGrid();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (pieces.length > 0) {
+      const result = checkWinCondition();
+      if (result && !isWin) {
+        handleWin();
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pieces]);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -90,31 +100,18 @@ const Grid = () => {
   }
 
   function swapPositions(draggedPiece: Piece, targetPiece: Piece) {
-    setPieces((prev) => {
-      const newPieces = prev.map((p) => {
-        if (p.id === draggedPiece.id) {
-          return { ...p, currentPosition: targetPiece.currentPosition };
-        }
-        if (p.id === targetPiece.id) {
-          return { ...p, currentPosition: draggedPiece.currentPosition };
-        }
-        return p;
-      });
-
-      return newPieces;
-    });
-  }
-
-  useEffect(() => {
-    if (pieces.length > 0) {
-      const result = checkWinCondition();
-      if (result && !isWin) {
-        handleWin();
+    const newPieces = pieces.map((p: Piece) => {
+      if (p.id === draggedPiece.id) {
+        return { ...p, currentPosition: targetPiece.currentPosition };
       }
-    }
+      if (p.id === targetPiece.id) {
+        return { ...p, currentPosition: draggedPiece.currentPosition };
+      }
+      return p;
+    });
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pieces]);
+    setPieces(newPieces);
+  }
 
   function checkWinCondition(piecesToCheck?: Piece[]): boolean {
     const currentPieces = piecesToCheck || pieces;

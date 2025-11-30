@@ -5,17 +5,25 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dayjs from "@/lib/utils/dayjs";
 
-import { getPuzzleBySlug } from "@/lib/actions/puzzles";
-import type { Puzzle } from "@/lib/types/puzzle";
-
-import usePuzzleStore from "@/lib/stores/puzzle-store";
+import {
+  setGameSessionFromLocalStorage,
+  getGameSessionFromLocalStorage,
+  clearGameSessionFromLocalStorage,
+} from "@/lib/utils/game-session";
 
 import {
   createGameSession,
   updateGameSession,
   completeGameSession,
   abandonGameSession,
+  getOrCreateGameSession,
 } from "@/lib/actions/game-sessions";
+
+import { getPuzzleBySlug } from "@/lib/actions/puzzles";
+import { signInAnonymously } from "@/lib/actions/auth";
+
+import usePuzzleStore from "@/lib/stores/puzzle-store";
+import useUserStore from "@/lib/stores/user-store";
 
 import Grid from "@/src/app/puzzle/components/Grid";
 import OriginalImageModal from "@/src/app/puzzle/components/OriginalImageModal";
@@ -24,17 +32,37 @@ const Puzzle = () => {
   const t = useTranslations();
   const { slug } = useParams();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
+  const gameSessionSaveIntervalId = usePuzzleStore(
+    (state) => state.gameSessionSaveIntervalId
+  );
+
   const isWin = usePuzzleStore((state) => state.isWin);
+  const setUser = useUserStore((state) => state.setUser);
   const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
   const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
   const setTimeSpentItervalId = usePuzzleStore(
     (state) => state.setTimeSpentItervalId
   );
+  const setGameSessionSaveIntervalId = usePuzzleStore(
+    (state) => state.setGameSessionSaveIntervalId
+  );
 
   useEffect(() => {
-    const search = async () => {
+    const signInAsGuest = async () => {
+      const { user } = await signInAnonymously();
+      if (user) {
+        setUser(user);
+      }
+    };
+
+    signInAsGuest();
+  }, [slug, setUser]);
+
+  useEffect(() => {
+    const getPuzzle = async () => {
       const { success, data, error } = await getPuzzleBySlug(slug as string);
       if (success && data) {
         setPuzzle(data);
@@ -43,16 +71,16 @@ const Puzzle = () => {
       }
     };
 
-    search();
-
+    getPuzzle();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   useEffect(() => {
     const START_TIME = Date.now();
+    const TIME_TICK = 100;
     const timeSpentInterval = setInterval(() => {
       setTimeSpent(Date.now() - START_TIME);
-    }, 100);
+    }, TIME_TICK);
 
     setTimeSpentItervalId(timeSpentInterval);
 
@@ -64,7 +92,40 @@ const Puzzle = () => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [slug]);
+
+  // save game session every 30s
+  useEffect(() => {
+    if (!puzzle) return;
+    if (gameSessionSaveIntervalId) return;
+
+    const GAME_SESSION_SAVE_INTERVAL = 1000 * 30;
+    const _gameSessionSaveIntervalId = setInterval(() => {
+      const currentTimeSpent = usePuzzleStore.getState().timeSpent;
+      const currentPieces = usePuzzleStore.getState().pieces;
+
+      setGameSessionFromLocalStorage({
+        user_id: null,
+        puzzle_id: puzzle.id,
+        piece_positions: JSON.stringify(currentPieces),
+        time_spent_ms: currentTimeSpent,
+        completion_percentage: 100,
+        mmr_change: 0,
+        is_finished: true,
+        difficulty_level: "hard",
+      });
+    }, GAME_SESSION_SAVE_INTERVAL);
+
+    setGameSessionSaveIntervalId(_gameSessionSaveIntervalId);
+
+    return () => {
+      clearTimeout(_gameSessionSaveIntervalId);
+      setGameSessionSaveIntervalId(null);
+      clearGameSessionFromLocalStorage();
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [puzzle]);
 
   function handleRestart() {
     // Simply reload the page to restart the puzzle

@@ -1,11 +1,13 @@
 import { create } from "zustand";
 
-import type { Puzzle } from "@/lib/types/puzzle";
+import type { Puzzle, Piece } from "@/lib/types/puzzle";
 
 type Interval = NodeJS.Timeout | null;
 
 interface PuzzleState {
   puzzle: Puzzle | null;
+  pieces: Piece[];
+  solution: Piece[];
   timeSpent: number;
   finalTimeSpent: number;
   isWin: boolean;
@@ -16,6 +18,8 @@ interface PuzzleState {
 
 interface PuzzleActions {
   setPuzzle: (puzzle: Puzzle | null) => void;
+  setPieces: (pieces: Piece[]) => void;
+  setSolution: (solution: Piece[]) => void;
   clearPuzzle: () => void;
   setTimeSpent: (timeSpent: number) => void;
   clearTimeSpent: () => void;
@@ -35,6 +39,8 @@ type PuzzleStore = PuzzleState & PuzzleActions;
 const usePuzzleStore = create<PuzzleStore>((set) => ({
   // State
   puzzle: null,
+  pieces: [],
+  solution: [],
   timeSpent: 0,
   finalTimeSpent: 0,
   isWin: false,
@@ -45,6 +51,9 @@ const usePuzzleStore = create<PuzzleStore>((set) => ({
   // Actions
   setPuzzle: (puzzle) => set({ puzzle }),
   clearPuzzle: () => set({ puzzle: null }),
+
+  setPieces: (pieces: Piece[]) => set({ pieces }),
+  setSolution: (solution: Piece[]) => set({ solution }),
 
   setTimeSpent: (timeSpent) => set({ timeSpent }),
   clearTimeSpent: () => set({ timeSpent: 0 }),

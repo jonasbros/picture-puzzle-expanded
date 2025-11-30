@@ -1,9 +1,11 @@
+import { memo } from "react";
+
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import styles from "./Grid.module.css";
 import type { Piece } from "@/lib/types/puzzle";
 import usePuzzleStore from "@/lib/stores/puzzle-store";
 
-const PuzzlePiece = ({ piece }: { piece: Piece }) => {
+const PuzzlePiece = memo(function PuzzlePiece({ piece }: { piece: Piece }) {
   const {
     attributes,
     listeners,
@@ -45,6 +47,6 @@ const PuzzlePiece = ({ piece }: { piece: Piece }) => {
       }}
     ></div>
   );
-};
+});
 
 export default PuzzlePiece;

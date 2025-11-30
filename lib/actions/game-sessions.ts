@@ -22,7 +22,6 @@ type ActionResult<T = null> = {
 
 /**
  * Server actions for game session operations
- * Following the established pattern from other actions in the codebase
  */
 
 /**
@@ -85,6 +84,45 @@ export async function getGameSession(
       success: false,
       error:
         error instanceof Error ? error.message : "Failed to fetch game session",
+    };
+  }
+}
+
+/**
+ * Create a new game session
+ */
+export async function getOrCreateGameSession(
+  id: string | null,
+  input: CreateGameSessionInput
+): Promise<ActionResult<GameSession>> {
+  try {
+    const supabase = await createClient();
+    const service = new GameSessionService(supabase);
+    let session = null;
+
+    if (id) {
+      session = await service.getById(id);
+    }
+
+    if (!session) {
+      session = await service.startSession(input);
+
+      revalidatePath("/puzzle");
+      revalidatePath("/dashboard");
+    }
+
+    return {
+      success: true,
+      data: session,
+    };
+  } catch (error) {
+    console.error("Error creating/fetching game session:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create/fetch game session",
     };
   }
 }
