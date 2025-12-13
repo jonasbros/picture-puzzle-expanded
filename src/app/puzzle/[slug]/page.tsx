@@ -114,6 +114,7 @@ const Puzzle = () => {
 
   function handleRestart() {
     // Simply reload the page to restart the puzzle
+    clearGameSessionFromLocalStorage();
     window.location.reload();
   }
 

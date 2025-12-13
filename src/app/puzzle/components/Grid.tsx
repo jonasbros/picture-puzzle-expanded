@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 import {
   DndContext,
@@ -9,15 +9,21 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 
-import type { Puzzle, Piece } from "@/lib/types/puzzle";
-import { generateGrid, getProgress } from "@/lib/utils/puzzle-grid";
-import styles from "./Grid.module.css";
-import PuzzlePiece from "./PuzzlePiece";
-import PostGameModal from "../components/PostGameModal";
+import type { Puzzle, Piece } from '@/lib/types/puzzle';
+import { generateGrid, getProgress } from '@/lib/utils/puzzle-grid';
+import styles from './Grid.module.css';
+import PuzzlePiece from './PuzzlePiece';
+import PostGameModal from '../components/PostGameModal';
 
-import usePuzzleStore from "@/lib/stores/puzzle-store";
+import usePuzzleStore from '@/lib/stores/puzzle-store';
+
+import {
+  setGameSessionFromLocalStorage,
+  getGameSessionFromLocalStorage,
+  clearGameSessionFromLocalStorage,
+} from '@/lib/utils/game-session';
 
 const Grid = () => {
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e
@@ -43,6 +49,24 @@ const Grid = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor)
   );
+
+  const saveGameSession = () => {
+    const currentTimeSpent = usePuzzleStore.getState().timeSpent;
+    const currentPieces = usePuzzleStore.getState().pieces;
+    const puzzle = usePuzzleStore.getState().puzzle;
+    if (!puzzle) return;
+
+    setGameSessionFromLocalStorage({
+      user_id: null,
+      puzzle_id: puzzle.id,
+      piece_positions: JSON.stringify(currentPieces),
+      time_spent_ms: currentTimeSpent,
+      completion_percentage: 100,
+      mmr_change: 0,
+      is_finished: true,
+      difficulty_level: 'hard',
+    });
+  };
 
   useEffect(() => {
     const setupGrid = () => {
@@ -71,6 +95,8 @@ const Grid = () => {
   }, []);
 
   useEffect(() => {
+    saveGameSession();
+
     if (pieces.length > 0) {
       const result = checkWinCondition();
       if (result && !isWin) {
@@ -141,10 +167,10 @@ const Grid = () => {
         <div
           className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
           style={{
-            display: "grid",
+            display: 'grid',
             gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
             gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
-            aspectRatio: "16/9",
+            aspectRatio: '16/9',
           }}
         >
           {pieces.map((piece, gridIndex) => (
