@@ -26,7 +26,7 @@ export interface LocalLeaderboard {
   created_at: string;
   updated_at: string;
   // Joined user data (when user_id is present)
-  user?: {
+  users?: {
     username: string;
     avatar?: string | null;
   };

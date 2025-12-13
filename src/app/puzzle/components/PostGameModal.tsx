@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { redirect, usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import dayjs from '@/lib/utils/dayjs';
+import { formatTimeToTimeSpent } from '@/lib/utils/dayjs';
 import { signInAnonymously } from '@/lib/actions/auth';
 import { createGameSession } from '@/lib/actions/game-sessions';
 import { createLocalLeaderboardEntryAction } from '@/lib/actions/local-leaderboards';
@@ -15,9 +16,28 @@ const PostGameModal = ({
   piecePositions: string;
 }) => {
   const t = useTranslations();
+  const pathname = usePathname();
   const modal = useRef<HTMLDialogElement>(null);
+  const [isInputsDisabled, setIsInputsDisabled] = useState<boolean>(false);
+
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
+  const timeSpentItervalId = usePuzzleStore(
+    (state) => state.timeSpentItervalId
+  );
+  const gameSessionSaveIntervalId = usePuzzleStore(
+    (state) => state.gameSessionSaveIntervalId
+  );
+
+  const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
+  const setIsWin = usePuzzleStore((state) => state.setIsWin);
+  const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
+  const clearTimeSpentItervalId = usePuzzleStore(
+    (state) => state.clearTimeSpentItervalId
+  );
+  const clearGameSessionSaveIntervalId = usePuzzleStore(
+    (state) => state.clearGameSessionSaveIntervalId
+  );
 
   useEffect(() => {
     if (!modal) return;
@@ -25,6 +45,7 @@ const PostGameModal = ({
   }, [isOpen]);
 
   async function postGameProcess(formData: FormData) {
+    setIsInputsDisabled(true);
     const username = formData.get('username') as string;
     const { user } = await signInAnonymously({
       options: {
@@ -45,8 +66,6 @@ const PostGameModal = ({
       return;
     }
 
-    console.log('user', user);
-
     await createGameSession({
       user_id: user.id,
       puzzle_id: puzzle.id,
@@ -66,8 +85,19 @@ const PostGameModal = ({
       difficulty_level: 'hard',
     });
 
+    resetGameStates();
+    setTimeout(() => {
+      redirect(`${pathname}/leaderboard`);
+    }, 200);
+  }
+
+  function resetGameStates() {
     clearGameSessionFromLocalStorage();
-    // show local leaderboard modal
+    setPuzzle(null);
+    setIsWin(false);
+    setTimeSpent(0);
+    clearTimeSpentItervalId(timeSpentItervalId);
+    clearGameSessionSaveIntervalId(gameSessionSaveIntervalId);
   }
 
   return (
@@ -87,7 +117,7 @@ const PostGameModal = ({
 
           <p className="text-center">{t('puzzle.your_time')}</p>
           <p className="text-2xl font-bold text-center mb-4">
-            {`${dayjs.duration(finalTimeSpent).format('HH:mm:ss.SSS')}`}
+            {`${formatTimeToTimeSpent(finalTimeSpent)}`}
           </p>
 
           <form action={postGameProcess}>
@@ -97,8 +127,13 @@ const PostGameModal = ({
                 type="text"
                 className="input w-72 mb-2"
                 placeholder={t('puzzle.name_in_leaderboards').toUpperCase()}
+                disabled={isInputsDisabled}
               />
-              <button className="btn btn-primary">{t('common.submit')}</button>
+              <button className="btn btn-primary" disabled={isInputsDisabled}>
+                {!isInputsDisabled
+                  ? t('common.submit')
+                  : t('common.submitting')}
+              </button>
             </fieldset>
           </form>
         </div>

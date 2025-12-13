@@ -14,6 +14,7 @@ type LocalLeaderboard =
 
 export interface ILocalLeaderboardService {
   createEntry(data: CreateLocalLeaderboardInput): Promise<LocalLeaderboard>;
+  getByPuzzleId(puzzleId: string): Promise<LocalLeaderboard[]>;
 }
 
 export class LocalLeaderboardService implements ILocalLeaderboardService {
@@ -57,6 +58,10 @@ export class LocalLeaderboardService implements ILocalLeaderboardService {
     }
 
     return await this.repository.create(validatedData);
+  }
+
+  async getByPuzzleId(puzzleId: string): Promise<LocalLeaderboard[]> {
+    return await this.repository.getByPuzzleId(puzzleId);
   }
 }
 

@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import dayjs from "@/lib/utils/dayjs";
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { formatTimeToTimeSpent } from '@/lib/utils/dayjs';
 
 import {
   setGameSessionFromLocalStorage,
   getGameSessionFromLocalStorage,
   clearGameSessionFromLocalStorage,
-} from "@/lib/utils/game-session";
+} from '@/lib/utils/game-session';
 
-import { getPuzzleBySlug } from "@/lib/actions/puzzles";
+import { getPuzzleBySlug } from '@/lib/actions/puzzles';
 
-import usePuzzleStore from "@/lib/stores/puzzle-store";
+import usePuzzleStore from '@/lib/stores/puzzle-store';
 
-import Grid from "@/src/app/puzzle/components/Grid";
-import OriginalImageModal from "@/src/app/puzzle/components/OriginalImageModal";
+import Grid from '@/src/app/puzzle/components/Grid';
+import OriginalImageModal from '@/src/app/puzzle/components/OriginalImageModal';
 
 const Puzzle = () => {
   const t = useTranslations();
@@ -45,7 +45,7 @@ const Puzzle = () => {
     if (success && data) {
       setPuzzle(data);
     } else {
-      setErrorMessage(error || "");
+      setErrorMessage(error || '');
     }
   };
 
@@ -97,7 +97,7 @@ const Puzzle = () => {
         completion_percentage: 100,
         mmr_change: 0,
         is_finished: true,
-        difficulty_level: "hard",
+        difficulty_level: 'hard',
       });
     }, GAME_SESSION_SAVE_INTERVAL);
 
@@ -143,14 +143,14 @@ const Puzzle = () => {
         </div>
 
         <div className="flex gap-2 items-center h-fit">
-          <span className="font-bold">{`${t("puzzle.time_spent")} - ${dayjs
-            .duration(timeSpent)
-            .format("HH:mm:ss.SSS")}`}</span>
+          <span className="font-bold">{`${t(
+            'puzzle.time_spent'
+          )} - ${formatTimeToTimeSpent(timeSpent)}`}</span>
           <OriginalImageModal imageUrl={puzzle.url} altText={puzzle.title} />
 
           <div className="dropdown dropdown-top dropdown-end">
             <button className="btn btn-primary uppercase transform transition-transform hover:scale-105">
-              {isWin ? t("puzzle.new_game") : t("puzzle.restart")}
+              {isWin ? t('puzzle.new_game') : t('puzzle.restart')}
             </button>
             <ul
               tabIndex={-1}
@@ -158,7 +158,7 @@ const Puzzle = () => {
             >
               <li>
                 <button className="text-error" onClick={() => handleRestart()}>
-                  {t("puzzle.are_you_sure")}
+                  {t('puzzle.are_you_sure')}
                 </button>
               </li>
             </ul>
