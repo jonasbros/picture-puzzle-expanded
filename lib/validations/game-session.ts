@@ -20,7 +20,11 @@ export const createGameSessionSchema = z.object({
 
 export const updateGameSessionSchema = z.object({
   piece_positions: z.string().min(1, "Piece positions are required").optional(),
-  time_spent_ms: z.number().int().min(0, "Time spent must be non-negative").optional(),
+  time_spent_ms: z
+    .number()
+    .int()
+    .min(0, "Time spent must be non-negative")
+    .optional(),
   completion_percentage: z.number().min(0).max(100).optional(),
   mmr_change: z.number().int().optional(),
   mmr_before: z.number().int().optional(),

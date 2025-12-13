@@ -1,6 +1,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/types/supabase";
-import { CreateUserInput, UpdateUserInput, UpdateUsernameInput } from "@/lib/validations/user";
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  UpdateUsernameInput,
+} from "@/lib/validations/user";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
 type UpdateUsernameResult = {
@@ -13,7 +17,10 @@ type UpdateUsernameResult = {
 export interface IUserRepository {
   create(data: CreateUserInput): Promise<User>;
   update(id: string, data: UpdateUserInput): Promise<User>;
-  updateUsername(id: string, data: UpdateUsernameInput): Promise<UpdateUsernameResult>;
+  updateUsername(
+    id: string,
+    data: UpdateUsernameInput
+  ): Promise<UpdateUsernameResult>;
   getById(id: string): Promise<User | null>;
 }
 
@@ -51,11 +58,12 @@ export class UserRepository implements IUserRepository {
 
   async update(id: string, data: UpdateUserInput): Promise<User> {
     const updateData: Record<string, any> = {};
-    
+
     if (data.email !== undefined) updateData.email = data.email;
     if (data.avatar !== undefined) updateData.avatar = data.avatar;
-    if (data.preferences !== undefined) updateData.preferences = data.preferences;
-    
+    if (data.preferences !== undefined)
+      updateData.preferences = data.preferences;
+
     // Handle username separately if provided (without using the function)
     if (data.username !== undefined) updateData.username = data.username;
 
@@ -70,11 +78,17 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async updateUsername(id: string, data: UpdateUsernameInput): Promise<UpdateUsernameResult> {
-    const { data: result, error } = await this.supabase.rpc("update_user_username", {
-      p_user_id: id,
-      p_new_username: data.username,
-    });
+  async updateUsername(
+    id: string,
+    data: UpdateUsernameInput
+  ): Promise<UpdateUsernameResult> {
+    const { data: result, error } = await this.supabase.rpc(
+      "update_user_username",
+      {
+        p_user_id: id,
+        p_new_username: data.username,
+      }
+    );
 
     if (error) throw error;
     return result[0]; // RPC returns array, take first result

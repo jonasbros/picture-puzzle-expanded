@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { User } from '@supabase/supabase-js';
-import { SignInAnonymouslyCredentials } from '@supabase/supabase-js';
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { User } from "@supabase/supabase-js";
+import { SignInAnonymouslyCredentials } from "@supabase/supabase-js";
 
 export async function signInWithProvider(
-  provider: 'google' | 'github'
+  provider: "google" | "github"
 ): Promise<void> {
   const supabase = await createClient();
 
@@ -45,7 +45,7 @@ export async function signOut(): Promise<void> {
     throw new Error(error.message);
   }
 
-  redirect('/');
+  redirect("/");
 }
 
 export async function isLoggedIn(): Promise<boolean> {

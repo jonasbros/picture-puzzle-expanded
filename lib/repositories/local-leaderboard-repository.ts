@@ -2,7 +2,8 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/types/supabase";
 import { CreateLocalLeaderboardInput } from "@/lib/validations/local-leaderboard";
 
-type LocalLeaderboard = Database["public"]["Tables"]["local_leaderboards"]["Row"];
+type LocalLeaderboard =
+  Database["public"]["Tables"]["local_leaderboards"]["Row"];
 
 export interface ILocalLeaderboardRepository {
   create(data: CreateLocalLeaderboardInput): Promise<LocalLeaderboard>;

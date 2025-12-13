@@ -1,11 +1,11 @@
-import { useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
-import dayjs from '@/lib/utils/dayjs';
-import { signInAnonymously } from '@/lib/actions/auth';
-import { createGameSession } from '@/lib/actions/game-sessions';
-import { createLocalLeaderboardEntryAction } from '@/lib/actions/local-leaderboards';
-import usePuzzleStore from '@/lib/stores/puzzle-store';
-import { clearGameSessionFromLocalStorage } from '@/lib/utils/game-session';
+import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
+import dayjs from "@/lib/utils/dayjs";
+import { signInAnonymously } from "@/lib/actions/auth";
+import { createGameSession } from "@/lib/actions/game-sessions";
+import { createLocalLeaderboardEntryAction } from "@/lib/actions/local-leaderboards";
+import usePuzzleStore from "@/lib/stores/puzzle-store";
+import { clearGameSessionFromLocalStorage } from "@/lib/utils/game-session";
 
 const PostGameModal = ({
   isOpen,
@@ -25,7 +25,7 @@ const PostGameModal = ({
   }, [isOpen]);
 
   async function postGameProcess(formData: FormData) {
-    const username = formData.get('username') as string;
+    const username = formData.get("username") as string;
     const { user } = await signInAnonymously({
       options: {
         data: {
@@ -35,17 +35,17 @@ const PostGameModal = ({
     });
 
     if (!user) {
-      console.error('failed to fetch user');
+      console.error("failed to fetch user");
       return;
     }
 
     if (!puzzle) {
       // todo: proper error handling
-      console.error('puzzle not found');
+      console.error("puzzle not found");
       return;
     }
 
-    console.log('user', user);
+    console.log("user", user);
 
     await createGameSession({
       user_id: user.id,
@@ -55,7 +55,7 @@ const PostGameModal = ({
       completion_percentage: 100,
       mmr_change: 0,
       is_finished: true,
-      difficulty_level: 'hard',
+      difficulty_level: "hard",
     });
 
     await createLocalLeaderboardEntryAction({
@@ -64,7 +64,7 @@ const PostGameModal = ({
       progress_percentage: 100,
       spent_time_ms: finalTimeSpent,
       name: username,
-      difficulty_level: 'hard',
+      difficulty_level: "hard",
     });
 
     clearGameSessionFromLocalStorage();
@@ -83,12 +83,12 @@ const PostGameModal = ({
           </form>
 
           <h3 className="font-bold text-lg text-center uppercase mb-4">
-            {t('puzzle.you_won')}
+            {t("puzzle.you_won")}
           </h3>
 
-          <p className="text-center">{t('puzzle.your_time')}</p>
+          <p className="text-center">{t("puzzle.your_time")}</p>
           <p className="text-2xl font-bold text-center mb-4">
-            {`${dayjs.duration(finalTimeSpent).format('HH:mm:ss.SSS')}`}
+            {`${dayjs.duration(finalTimeSpent).format("HH:mm:ss.SSS")}`}
           </p>
 
           <form action={postGameProcess}>
@@ -97,9 +97,9 @@ const PostGameModal = ({
                 name="username"
                 type="text"
                 className="input w-72 mb-2"
-                placeholder={t('puzzle.name_in_leaderboards').toUpperCase()}
+                placeholder={t("puzzle.name_in_leaderboards").toUpperCase()}
               />
-              <button className="btn btn-primary">{t('common.submit')}</button>
+              <button className="btn btn-primary">{t("common.submit")}</button>
             </fieldset>
           </form>
         </div>

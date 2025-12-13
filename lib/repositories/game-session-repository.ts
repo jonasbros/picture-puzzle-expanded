@@ -2,8 +2,10 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/lib/types/supabase";
 
 type GameSession = Database["public"]["Tables"]["game_sessions"]["Row"];
-type CreateGameSessionInput = Database["public"]["Tables"]["game_sessions"]["Insert"];
-type UpdateGameSessionInput = Database["public"]["Tables"]["game_sessions"]["Update"];
+type CreateGameSessionInput =
+  Database["public"]["Tables"]["game_sessions"]["Insert"];
+type UpdateGameSessionInput =
+  Database["public"]["Tables"]["game_sessions"]["Update"];
 
 /**
  * Repository for game_sessions table operations
@@ -57,7 +59,10 @@ export class GameSessionRepository {
   /**
    * Get user's current (unfinished) session for a puzzle
    */
-  async getCurrentSession(userId: string, puzzleId: string): Promise<GameSession | null> {
+  async getCurrentSession(
+    userId: string,
+    puzzleId: string
+  ): Promise<GameSession | null> {
     const { data, error } = await this.supabase
       .from("game_sessions")
       .select("*")
@@ -104,7 +109,10 @@ export class GameSessionRepository {
     }
 
     if (options?.offset) {
-      query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+      query = query.range(
+        options.offset,
+        options.offset + (options.limit || 10) - 1
+      );
     }
 
     const { data, error } = await query;
@@ -130,7 +138,10 @@ export class GameSessionRepository {
   /**
    * Update an existing game session
    */
-  async update(id: string, input: UpdateGameSessionInput): Promise<GameSession> {
+  async update(
+    id: string,
+    input: UpdateGameSessionInput
+  ): Promise<GameSession> {
     const { data, error } = await this.supabase
       .from("game_sessions")
       .update(input)
@@ -172,13 +183,17 @@ export class GameSessionRepository {
   async getPuzzleLeaderboard(
     puzzleId: string,
     limit: number = 10
-  ): Promise<(GameSession & { user: { username: string; avatar: string | null } })[]> {
+  ): Promise<
+    (GameSession & { user: { username: string; avatar: string | null } })[]
+  > {
     const { data, error } = await this.supabase
       .from("game_sessions")
-      .select(`
+      .select(
+        `
         *,
         user:users!inner(username, avatar)
-      `)
+      `
+      )
       .eq("puzzle_id", puzzleId)
       .eq("is_finished", true)
       .eq("completion_percentage", 100)
@@ -205,19 +220,26 @@ export class GameSessionRepository {
 
     if (error) throw error;
 
-    const completedSessions = data.filter(session => 
-      session.is_finished && session.completion_percentage === 100
+    const completedSessions = data.filter(
+      (session) => session.is_finished && session.completion_percentage === 100
     );
 
-    const completionTimes = completedSessions.map(session => session.time_spent_ms);
+    const completionTimes = completedSessions.map(
+      (session) => session.time_spent_ms
+    );
 
     return {
       totalSessions: data.length,
       completedSessions: completedSessions.length,
-      averageTime: completionTimes.length > 0 
-        ? Math.round(completionTimes.reduce((sum, time) => sum + time, 0) / completionTimes.length)
-        : null,
-      bestTime: completionTimes.length > 0 ? Math.min(...completionTimes) : null
+      averageTime:
+        completionTimes.length > 0
+          ? Math.round(
+              completionTimes.reduce((sum, time) => sum + time, 0) /
+                completionTimes.length
+            )
+          : null,
+      bestTime:
+        completionTimes.length > 0 ? Math.min(...completionTimes) : null,
     };
   }
 }

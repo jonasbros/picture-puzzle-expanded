@@ -24,7 +24,10 @@ type UpdateUsernameResult = {
 export interface IUserService {
   createUser(data: CreateUserInput): Promise<User>;
   updateUser(id: string, data: UpdateUserInput): Promise<User>;
-  updateUsername(id: string, data: UpdateUsernameInput): Promise<UpdateUsernameResult>;
+  updateUsername(
+    id: string,
+    data: UpdateUsernameInput
+  ): Promise<UpdateUsernameResult>;
   getUserById(id: string): Promise<User | null>;
 }
 
@@ -88,7 +91,10 @@ export class UserService implements IUserService {
     return await this.repository.update(id, validatedData);
   }
 
-  async updateUsername(id: string, data: UpdateUsernameInput): Promise<UpdateUsernameResult> {
+  async updateUsername(
+    id: string,
+    data: UpdateUsernameInput
+  ): Promise<UpdateUsernameResult> {
     const validatedData = updateUsernameSchema.parse(data);
     return await this.repository.updateUsername(id, validatedData);
   }

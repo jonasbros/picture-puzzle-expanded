@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createUserService } from "@/lib/services/user-service";
-import { 
-  CreateUserInput, 
-  UpdateUserInput, 
-  UpdateUsernameInput 
+import {
+  CreateUserInput,
+  UpdateUserInput,
+  UpdateUsernameInput,
 } from "@/lib/validations/user";
 
 export async function createUserAction(data: CreateUserInput) {
@@ -48,7 +48,10 @@ export async function updateUserAction(id: string, data: UpdateUserInput) {
   }
 }
 
-export async function updateUsernameAction(id: string, data: UpdateUsernameInput) {
+export async function updateUsernameAction(
+  id: string,
+  data: UpdateUsernameInput
+) {
   try {
     const supabase = await createClient();
     const userService = createUserService(supabase);
@@ -70,7 +73,8 @@ export async function updateUsernameAction(id: string, data: UpdateUsernameInput
     console.error("Update username error:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update username",
+      error:
+        error instanceof Error ? error.message : "Failed to update username",
     };
   }
 }

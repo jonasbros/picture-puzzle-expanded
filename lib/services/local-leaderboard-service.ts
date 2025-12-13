@@ -9,7 +9,8 @@ import {
   CreateLocalLeaderboardInput,
 } from "@/lib/validations/local-leaderboard";
 
-type LocalLeaderboard = Database["public"]["Tables"]["local_leaderboards"]["Row"];
+type LocalLeaderboard =
+  Database["public"]["Tables"]["local_leaderboards"]["Row"];
 
 export interface ILocalLeaderboardService {
   createEntry(data: CreateLocalLeaderboardInput): Promise<LocalLeaderboard>;
@@ -24,7 +25,9 @@ export class LocalLeaderboardService implements ILocalLeaderboardService {
     this.repository = new LocalLeaderboardRepository(supabase);
   }
 
-  async createEntry(data: CreateLocalLeaderboardInput): Promise<LocalLeaderboard> {
+  async createEntry(
+    data: CreateLocalLeaderboardInput
+  ): Promise<LocalLeaderboard> {
     const validatedData = createLocalLeaderboardSchema.parse(data);
 
     // Business logic: Verify puzzle exists
@@ -62,13 +65,18 @@ export class LocalLeaderboardService implements ILocalLeaderboardService {
     if (validatedData.user_id) {
       duplicateQuery = duplicateQuery.eq("user_id", validatedData.user_id);
     } else if (validatedData.name) {
-      duplicateQuery = duplicateQuery.eq("name", validatedData.name).is("user_id", null);
+      duplicateQuery = duplicateQuery
+        .eq("name", validatedData.name)
+        .is("user_id", null);
     }
 
-    const { data: existingEntry, error: duplicateError } = await duplicateQuery.single();
+    const { data: existingEntry, error: duplicateError } =
+      await duplicateQuery.single();
 
     if (existingEntry) {
-      throw new Error("An entry for this puzzle already exists for this user/name");
+      throw new Error(
+        "An entry for this puzzle already exists for this user/name"
+      );
     }
 
     // If error is not "no rows found", throw it

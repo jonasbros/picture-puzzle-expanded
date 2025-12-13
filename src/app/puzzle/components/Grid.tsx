@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 import {
   DndContext,
@@ -8,17 +8,17 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 
-import type { Piece } from '@/lib/types/puzzle';
-import { generateGrid } from '@/lib/utils/puzzle-grid';
-import styles from './Grid.module.css';
-import PuzzlePiece from './PuzzlePiece';
-import PostGameModal from '../components/PostGameModal';
+import type { Piece } from "@/lib/types/puzzle";
+import { generateGrid } from "@/lib/utils/puzzle-grid";
+import styles from "./Grid.module.css";
+import PuzzlePiece from "./PuzzlePiece";
+import PostGameModal from "../components/PostGameModal";
 
-import usePuzzleStore from '@/lib/stores/puzzle-store';
+import usePuzzleStore from "@/lib/stores/puzzle-store";
 
-import { setGameSessionFromLocalStorage } from '@/lib/utils/game-session';
+import { setGameSessionFromLocalStorage } from "@/lib/utils/game-session";
 
 const Grid = () => {
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e
@@ -59,7 +59,7 @@ const Grid = () => {
       completion_percentage: 100,
       mmr_change: 0,
       is_finished: true,
-      difficulty_level: 'hard',
+      difficulty_level: "hard",
     });
   };
 
@@ -162,10 +162,10 @@ const Grid = () => {
         <div
           className={`${styles.gridContainer} w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
           style={{
-            display: 'grid',
+            display: "grid",
             gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
             gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
-            aspectRatio: '16/9',
+            aspectRatio: "16/9",
           }}
         >
           {pieces.map((piece, gridIndex) => (

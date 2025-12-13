@@ -45,7 +45,10 @@ export class GameSessionService {
   /**
    * Get user's current active session for a puzzle
    */
-  async getCurrentSession(userId: string, puzzleId: string): Promise<GameSession | null> {
+  async getCurrentSession(
+    userId: string,
+    puzzleId: string
+  ): Promise<GameSession | null> {
     if (!userId) throw new Error("User ID is required");
     if (!puzzleId) throw new Error("Puzzle ID is required");
     return this.repository.getCurrentSession(userId, puzzleId);
@@ -133,7 +136,10 @@ export class GameSessionService {
   /**
    * Update game session with validation
    */
-  async update(sessionId: string, input: UpdateGameSessionInput): Promise<GameSession> {
+  async update(
+    sessionId: string,
+    input: UpdateGameSessionInput
+  ): Promise<GameSession> {
     if (!sessionId) throw new Error("Session ID is required");
 
     // Validate input
@@ -242,8 +248,9 @@ export class GameSessionService {
   validatePiecePositions(positions: string): boolean {
     try {
       const parsed = JSON.parse(positions);
-      return Array.isArray(parsed) && parsed.every(pos => 
-        typeof pos === "number" && pos > 0
+      return (
+        Array.isArray(parsed) &&
+        parsed.every((pos) => typeof pos === "number" && pos > 0)
       );
     } catch {
       return false;
