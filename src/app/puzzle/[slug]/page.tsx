@@ -1,32 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-import dayjs from "@/lib/utils/dayjs";
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import dayjs from '@/lib/utils/dayjs';
 
 import {
   setGameSessionFromLocalStorage,
   getGameSessionFromLocalStorage,
   clearGameSessionFromLocalStorage,
-} from "@/lib/utils/game-session";
+} from '@/lib/utils/game-session';
 
-import {
-  createGameSession,
-  updateGameSession,
-  completeGameSession,
-  abandonGameSession,
-  getOrCreateGameSession,
-} from "@/lib/actions/game-sessions";
+import { getPuzzleBySlug } from '@/lib/actions/puzzles';
 
-import { getPuzzleBySlug } from "@/lib/actions/puzzles";
-import { signInAnonymously } from "@/lib/actions/auth";
+import usePuzzleStore from '@/lib/stores/puzzle-store';
 
-import usePuzzleStore from "@/lib/stores/puzzle-store";
-import useUserStore from "@/lib/stores/user-store";
-
-import Grid from "@/src/app/puzzle/components/Grid";
-import OriginalImageModal from "@/src/app/puzzle/components/OriginalImageModal";
+import Grid from '@/src/app/puzzle/components/Grid';
+import OriginalImageModal from '@/src/app/puzzle/components/OriginalImageModal';
 
 const Puzzle = () => {
   const t = useTranslations();
@@ -35,12 +25,12 @@ const Puzzle = () => {
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
+  const timeSpentItervalId = usePuzzleStore((state) => state.timeSpent);
   const gameSessionSaveIntervalId = usePuzzleStore(
     (state) => state.gameSessionSaveIntervalId
   );
 
   const isWin = usePuzzleStore((state) => state.isWin);
-  const setUser = useUserStore((state) => state.setUser);
   const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
   const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
   const setTimeSpentItervalId = usePuzzleStore(
@@ -50,45 +40,40 @@ const Puzzle = () => {
     (state) => state.setGameSessionSaveIntervalId
   );
 
-  useEffect(() => {
-    const signInAsGuest = async () => {
-      const { user } = await signInAnonymously();
-      if (user) {
-        setUser(user);
-      }
-    };
+  const getPuzzle = async () => {
+    const { success, data, error } = await getPuzzleBySlug(slug as string);
+    if (success && data) {
+      setPuzzle(data);
+    } else {
+      setErrorMessage(error || '');
+    }
+  };
 
-    signInAsGuest();
-  }, [slug, setUser]);
-
-  useEffect(() => {
-    const getPuzzle = async () => {
-      const { success, data, error } = await getPuzzleBySlug(slug as string);
-      if (success && data) {
-        setPuzzle(data);
-      } else {
-        setErrorMessage(error || "");
-      }
-    };
-
-    getPuzzle();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
-
-  useEffect(() => {
+  const runGameTimer = (restoredTime: number = 0) => {
     const START_TIME = Date.now();
     const TIME_TICK = 100;
+
     const timeSpentInterval = setInterval(() => {
-      setTimeSpent(Date.now() - START_TIME);
+      const currentTime = restoredTime + (Date.now() - START_TIME);
+      setTimeSpent(currentTime);
     }, TIME_TICK);
 
     setTimeSpentItervalId(timeSpentInterval);
+  };
+
+  useEffect(() => {
+    const gameSession = getGameSessionFromLocalStorage();
+    const restoredTime = gameSession?.time_spent_ms || 0;
+
+    setTimeSpent(restoredTime);
+    getPuzzle();
+    runGameTimer(restoredTime);
 
     return () => {
       setTimeSpent(0);
 
-      if (timeSpentInterval) {
-        clearInterval(timeSpentInterval);
+      if (timeSpentItervalId) {
+        clearInterval(timeSpentItervalId);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,7 +97,7 @@ const Puzzle = () => {
         completion_percentage: 100,
         mmr_change: 0,
         is_finished: true,
-        difficulty_level: "hard",
+        difficulty_level: 'hard',
       });
     }, GAME_SESSION_SAVE_INTERVAL);
 
@@ -157,14 +142,14 @@ const Puzzle = () => {
         </div>
 
         <div className="flex gap-2 items-center h-fit">
-          <span className="font-bold">{`${t("puzzle.time_spent")} - ${dayjs
+          <span className="font-bold">{`${t('puzzle.time_spent')} - ${dayjs
             .duration(timeSpent)
-            .format("HH:mm:ss.SSS")}`}</span>
+            .format('HH:mm:ss.SSS')}`}</span>
           <OriginalImageModal imageUrl={puzzle.url} altText={puzzle.title} />
 
           <div className="dropdown dropdown-top dropdown-end">
             <button className="btn btn-primary uppercase transform transition-transform hover:scale-105">
-              {isWin ? t("puzzle.new_game") : t("puzzle.restart")}
+              {isWin ? t('puzzle.new_game') : t('puzzle.restart')}
             </button>
             <ul
               tabIndex={-1}
@@ -172,7 +157,7 @@ const Puzzle = () => {
             >
               <li>
                 <button className="text-error" onClick={() => handleRestart()}>
-                  {t("puzzle.are_you_sure")}
+                  {t('puzzle.are_you_sure')}
                 </button>
               </li>
             </ul>
