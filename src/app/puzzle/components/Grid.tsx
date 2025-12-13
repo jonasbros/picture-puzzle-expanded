@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useEffect } from 'react';
 
 import {
   DndContext,
@@ -11,19 +10,15 @@ import {
   DragEndEvent,
 } from '@dnd-kit/core';
 
-import type { Puzzle, Piece } from '@/lib/types/puzzle';
-import { generateGrid, getProgress } from '@/lib/utils/puzzle-grid';
+import type { Piece } from '@/lib/types/puzzle';
+import { generateGrid } from '@/lib/utils/puzzle-grid';
 import styles from './Grid.module.css';
 import PuzzlePiece from './PuzzlePiece';
 import PostGameModal from '../components/PostGameModal';
 
 import usePuzzleStore from '@/lib/stores/puzzle-store';
 
-import {
-  setGameSessionFromLocalStorage,
-  getGameSessionFromLocalStorage,
-  clearGameSessionFromLocalStorage,
-} from '@/lib/utils/game-session';
+import { setGameSessionFromLocalStorage } from '@/lib/utils/game-session';
 
 const Grid = () => {
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e

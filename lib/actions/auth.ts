@@ -1,22 +1,25 @@
-"use server";
+'use server';
 
-import { User } from "@supabase/supabase-js";
-import authClient from "../services/auth/client";
+import { User } from '@supabase/supabase-js';
+import authClient from '../services/auth/client';
+import { SignInAnonymouslyCredentials } from '@supabase/supabase-js';
 
-const AUTH_CLIENT = "supabase";
+const AUTH_CLIENT = 'supabase';
 
 async function getClient() {
   return await authClient(AUTH_CLIENT);
 }
 
-export async function signInWithProvider(provider: "google") {
+export async function signInWithProvider(provider: 'google') {
   const client = await getClient();
   await client.signInWithProvider(provider);
 }
 
-export async function signInAnonymously() {
+export async function signInAnonymously(
+  options: SignInAnonymouslyCredentials = {}
+) {
   const client = await getClient();
-  return await client.signInAnonymously();
+  return await client.signInAnonymously(options);
 }
 
 export async function signOut() {
