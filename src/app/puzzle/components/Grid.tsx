@@ -17,7 +17,10 @@ import PuzzlePiece from './PuzzlePiece';
 
 import usePuzzleStore from '@/lib/stores/puzzle-store';
 
-import { setGameSessionFromLocalStorage } from '@/lib/utils/game-session';
+import {
+  setGameSessionFromLocalStorage,
+  getGameSessionFromLocalStorage,
+} from '@/lib/utils/game-session';
 
 const Grid = () => {
   // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e
@@ -83,6 +86,7 @@ const Grid = () => {
       };
 
       setPieces(_solutionCopy); // temp
+      restorePuzzleStateFromGameSession();
       setSolution(_solution);
     };
 
@@ -102,6 +106,12 @@ const Grid = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pieces]);
+
+  function restorePuzzleStateFromGameSession() {
+    const gameSession = getGameSessionFromLocalStorage();
+    if (!gameSession) return;
+    setPieces(gameSession.piece_positions);
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;

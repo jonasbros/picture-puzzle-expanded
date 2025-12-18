@@ -76,8 +76,8 @@ const Puzzle = () => {
     const restoredTime = gameSession?.time_spent_ms || 0;
 
     setTimeSpent(restoredTime);
-    getPuzzle();
     runGameTimer(restoredTime);
+    getPuzzle();
 
     return () => {
       setTimeSpent(0);
