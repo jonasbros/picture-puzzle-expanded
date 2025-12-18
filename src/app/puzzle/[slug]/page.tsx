@@ -17,6 +17,7 @@ import usePuzzleStore from '@/lib/stores/puzzle-store';
 
 import Grid from '@/src/app/puzzle/components/Grid';
 import OriginalImageModal from '@/src/app/puzzle/components/OriginalImageModal';
+import PostGameModal from '../components/PostGameModal';
 
 const Puzzle = () => {
   const t = useTranslations();
@@ -24,8 +25,8 @@ const Puzzle = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
+  const pieces = usePuzzleStore((state) => state.pieces);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
-  const timeSpentItervalId = usePuzzleStore((state) => state.timeSpent);
   const gameSessionSaveIntervalId = usePuzzleStore(
     (state) => state.gameSessionSaveIntervalId
   );
@@ -38,6 +39,13 @@ const Puzzle = () => {
   );
   const setGameSessionSaveIntervalId = usePuzzleStore(
     (state) => state.setGameSessionSaveIntervalId
+  );
+  const setIsWin = usePuzzleStore((state) => state.setIsWin);
+  const clearTimeSpentItervalId = usePuzzleStore(
+    (state) => state.clearTimeSpentItervalId
+  );
+  const clearGameSessionSaveIntervalId = usePuzzleStore(
+    (state) => state.clearGameSessionSaveIntervalId
   );
 
   const getPuzzle = async () => {
@@ -62,6 +70,8 @@ const Puzzle = () => {
   };
 
   useEffect(() => {
+    resetGameStates();
+
     const gameSession = getGameSessionFromLocalStorage();
     const restoredTime = gameSession?.time_spent_ms || 0;
 
@@ -71,20 +81,17 @@ const Puzzle = () => {
 
     return () => {
       setTimeSpent(0);
-
-      if (timeSpentItervalId) {
-        clearInterval(timeSpentItervalId);
-      }
+      clearTimeSpentItervalId();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  // save game session every 30s
+  // save game session every 1s
   useEffect(() => {
     if (!puzzle) return;
     if (gameSessionSaveIntervalId) return;
 
-    const GAME_SESSION_SAVE_INTERVAL = 1000 * 30;
+    const GAME_SESSION_SAVE_INTERVAL = 1000;
     const _gameSessionSaveIntervalId = setInterval(() => {
       const currentTimeSpent = usePuzzleStore.getState().timeSpent;
       const currentPieces = usePuzzleStore.getState().pieces;
@@ -92,7 +99,7 @@ const Puzzle = () => {
       setGameSessionFromLocalStorage({
         user_id: null,
         puzzle_id: puzzle.id,
-        piece_positions: JSON.stringify(currentPieces),
+        piece_positions: currentPieces,
         time_spent_ms: currentTimeSpent,
         completion_percentage: 100,
         mmr_change: 0,
@@ -104,13 +111,20 @@ const Puzzle = () => {
     setGameSessionSaveIntervalId(_gameSessionSaveIntervalId);
 
     return () => {
-      clearTimeout(_gameSessionSaveIntervalId);
+      clearGameSessionSaveIntervalId();
       setGameSessionSaveIntervalId(null);
-      clearGameSessionFromLocalStorage();
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puzzle]);
+  }, [slug]);
+
+  function resetGameStates() {
+    setPuzzle(null);
+    setIsWin(false);
+    setTimeSpent(0);
+    clearTimeSpentItervalId();
+    clearGameSessionSaveIntervalId();
+  }
 
   function handleRestart() {
     // Simply reload the page to restart the puzzle
@@ -165,6 +179,8 @@ const Puzzle = () => {
           </div>
         </div>
       </div>
+
+      <PostGameModal isOpen={isWin} piecePositions={JSON.stringify(pieces)} />
     </main>
   );
 };

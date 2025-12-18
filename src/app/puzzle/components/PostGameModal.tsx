@@ -22,22 +22,6 @@ const PostGameModal = ({
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
-  const timeSpentItervalId = usePuzzleStore(
-    (state) => state.timeSpentItervalId
-  );
-  const gameSessionSaveIntervalId = usePuzzleStore(
-    (state) => state.gameSessionSaveIntervalId
-  );
-
-  const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
-  const setIsWin = usePuzzleStore((state) => state.setIsWin);
-  const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
-  const clearTimeSpentItervalId = usePuzzleStore(
-    (state) => state.clearTimeSpentItervalId
-  );
-  const clearGameSessionSaveIntervalId = usePuzzleStore(
-    (state) => state.clearGameSessionSaveIntervalId
-  );
 
   useEffect(() => {
     if (!modal) return;
@@ -85,19 +69,10 @@ const PostGameModal = ({
       difficulty_level: 'hard',
     });
 
-    resetGameStates();
+    clearGameSessionFromLocalStorage();
     setTimeout(() => {
       redirect(`${pathname}/leaderboard`);
     }, 200);
-  }
-
-  function resetGameStates() {
-    clearGameSessionFromLocalStorage();
-    setPuzzle(null);
-    setIsWin(false);
-    setTimeSpent(0);
-    clearTimeSpentItervalId(timeSpentItervalId);
-    clearGameSessionSaveIntervalId(gameSessionSaveIntervalId);
   }
 
   return (

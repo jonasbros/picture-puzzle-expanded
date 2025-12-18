@@ -29,9 +29,9 @@ interface PuzzleActions {
   setProgress: (progress: number) => void;
   clearProgress: () => void;
   setTimeSpentItervalId: (intervalId: Interval) => void;
-  clearTimeSpentItervalId: (intervalId: Interval) => void;
+  clearTimeSpentItervalId: () => void;
   setGameSessionSaveIntervalId: (intervalId: Interval) => void;
-  clearGameSessionSaveIntervalId: (intervalId: Interval) => void;
+  clearGameSessionSaveIntervalId: () => void;
 }
 
 type PuzzleStore = PuzzleState & PuzzleActions;
@@ -67,17 +67,21 @@ const usePuzzleStore = create<PuzzleStore>((set) => ({
   clearProgress: () => set({ progress: 0 }),
 
   setTimeSpentItervalId: (timeSpentItervalId) => set({ timeSpentItervalId }),
-  clearTimeSpentItervalId: (timeSpentItervalId: Interval) => {
-    clearInterval(timeSpentItervalId as NodeJS.Timeout);
-    set({ timeSpentItervalId: null });
-  },
+
+  clearTimeSpentItervalId: () =>
+    set((state) => {
+      clearInterval(state.timeSpentItervalId as NodeJS.Timeout);
+      return { timeSpentItervalId: null };
+    }),
 
   setGameSessionSaveIntervalId: (gameSessionSaveIntervalId) =>
     set({ gameSessionSaveIntervalId }),
-  clearGameSessionSaveIntervalId: (gameSessionSaveIntervalId: Interval) => {
-    clearInterval(gameSessionSaveIntervalId as NodeJS.Timeout);
-    set({ gameSessionSaveIntervalId: null });
-  },
+
+  clearGameSessionSaveIntervalId: () =>
+    set((state) => {
+      clearInterval(state.gameSessionSaveIntervalId as NodeJS.Timeout);
+      return { gameSessionSaveIntervalId: null };
+    }),
 }));
 
 export default usePuzzleStore;

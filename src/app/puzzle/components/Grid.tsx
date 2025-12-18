@@ -14,7 +14,6 @@ import type { Piece } from '@/lib/types/puzzle';
 import { generateGrid } from '@/lib/utils/puzzle-grid';
 import styles from './Grid.module.css';
 import PuzzlePiece from './PuzzlePiece';
-import PostGameModal from '../components/PostGameModal';
 
 import usePuzzleStore from '@/lib/stores/puzzle-store';
 
@@ -56,7 +55,7 @@ const Grid = () => {
     setGameSessionFromLocalStorage({
       user_id: null,
       puzzle_id: puzzle.id,
-      piece_positions: JSON.stringify(currentPieces),
+      piece_positions: currentPieces,
       time_spent_ms: currentTimeSpent,
       completion_percentage: 100,
       mmr_change: 0,
@@ -147,7 +146,7 @@ const Grid = () => {
 
   function handleWin() {
     setFinalTimeSpent(timeSpent);
-    clearTimeSpentItervalId(timeSpentItervalId);
+    clearTimeSpentItervalId();
 
     setTimeout(() => {
       setIsWin(true);
@@ -175,7 +174,6 @@ const Grid = () => {
           ))}
         </div>
       </DndContext>
-      <PostGameModal isOpen={isWin} piecePositions={JSON.stringify(pieces)} />
     </>
   );
 };

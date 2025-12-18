@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { formatTimeToTimeSpent } from '@/lib/utils/dayjs';
 
@@ -53,7 +54,9 @@ const Leaderboard = () => {
     <main className="container min-h-full h-full mx-auto">
       {puzzle && (
         <h2 className="text-xl text-center font-bold mb-4">
-          {`${t('common.leaderboards')} - ${puzzle.title}`}
+          <Link href={`/puzzle/${puzzle.slug}`}>
+            {`${t('common.leaderboards')} - ${puzzle.title}`}
+          </Link>
         </h2>
       )}
 
