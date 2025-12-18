@@ -19,6 +19,8 @@ const PostGameModal = ({
   const pathname = usePathname();
   const modal = useRef<HTMLDialogElement>(null);
   const [isInputsDisabled, setIsInputsDisabled] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
@@ -29,8 +31,14 @@ const PostGameModal = ({
   }, [isOpen]);
 
   async function postGameProcess(formData: FormData) {
-    setIsInputsDisabled(true);
     const username = formData.get('username') as string;
+    if (!username) {
+      setHasError(true);
+      setErrorMessage('Username is required!');
+      return;
+    }
+
+    setIsInputsDisabled(true);
     const { user } = await signInAnonymously({
       options: {
         data: {
@@ -50,7 +58,7 @@ const PostGameModal = ({
       return;
     }
 
-    await createGameSession({
+    const gameSession = await createGameSession({
       user_id: user.id,
       puzzle_id: puzzle.id,
       piece_positions: piecePositions,
@@ -61,13 +69,25 @@ const PostGameModal = ({
       difficulty_level: 'hard',
     });
 
-    await createLocalLeaderboardEntryAction({
+    if (!gameSession.success) {
+      setHasError(true);
+      setErrorMessage(gameSession.error as string);
+      return;
+    }
+
+    const localLeaderboard = await createLocalLeaderboardEntryAction({
       user_id: user.id,
       puzzle_id: puzzle.id,
       progress_percentage: 100,
       spent_time_ms: finalTimeSpent,
       difficulty_level: 'hard',
     });
+
+    if (!localLeaderboard.success) {
+      setHasError(true);
+      setErrorMessage(localLeaderboard.error as string);
+      return;
+    }
 
     clearGameSessionFromLocalStorage();
     setTimeout(() => {
@@ -100,10 +120,15 @@ const PostGameModal = ({
               <input
                 name="username"
                 type="text"
-                className="input w-72 mb-2"
+                className={`input w-72 ${hasError ? 'input-error' : 'mb-2'}`}
                 placeholder={t('puzzle.name_in_leaderboards').toUpperCase()}
                 disabled={isInputsDisabled}
+                onChange={() => {
+                  setHasError(false);
+                }}
               />
+              {hasError && <p className="text-error mb-2">{errorMessage}</p>}
+
               <button className="btn btn-primary" disabled={isInputsDisabled}>
                 {!isInputsDisabled
                   ? t('common.submit')
