@@ -1,6 +1,6 @@
 -- Insert daily puzzles for the next week with specific times
 WITH puzzle_ids AS (
-  SELECT id FROM puzzles ORDER BY created_at LIMIT 4
+  SELECT id FROM puzzles ORDER BY created_at LIMIT 1
 )
 INSERT INTO daily_puzzles (puzzle_id, puzzle_date)
 SELECT 
