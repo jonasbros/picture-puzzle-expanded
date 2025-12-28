@@ -28,7 +28,13 @@ const HomePuzzleOfDay = async () => {
         <div className="text-center lg:text-left">
           <h2 className="text-xl font-bold">{dailyPuzzle.title}</h2>
           <p>{dailyPuzzle.attribution.photographer}</p>
-          <p>{dailyPuzzle.attribution.source}</p>
+          <a
+            href={dailyPuzzle.attribution.source_url}
+            className="hover:text-primary"
+            target="_blank"
+          >
+            {dailyPuzzle.attribution.source}
+          </a>
         </div>
         <div className="flex flex-col sm:flex-row mt-6 lg:mt-0 gap-2">
           <Link

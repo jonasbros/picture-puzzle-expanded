@@ -1,5 +1,5 @@
 -- Create a cron job to automatically add a random daily puzzle
--- Runs every 30 seconds and adds a puzzle for the current date if none exists
+-- Runs every midnight and adds a puzzle for the current date if none exists
 
 -- Enable pg_cron extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS pg_cron;
@@ -33,7 +33,7 @@ $$;
 -- This will run every minute, but the function logic ensures only one puzzle per day
 SELECT cron.schedule(
   'daily-puzzle-job',
-  '* * * * *',  -- Every minute
+  '0 0 * * *',  -- Every midnight
   'SELECT add_daily_puzzle_for_today();'
 );
 
