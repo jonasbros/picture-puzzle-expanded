@@ -41,8 +41,8 @@ export default function RootLayout({
             </div>
 
             {/* <GuestNavbar /> */}
-            <div className="flex flex-col min-h-screen items-center justify-start py-16">
-              <Link href="/">
+            <div className="flex flex-col min-h-screen items-center justify-start">
+              <Link href="/" className="pt-16">
                 <h1 className="text-4xl font-bold uppercase mb-6">
                   {t("common.brand")}
                 </h1>
