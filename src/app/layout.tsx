@@ -42,7 +42,7 @@ export default function RootLayout({
 
             {/* <GuestNavbar /> */}
             <div className="flex flex-col min-h-screen items-center justify-start">
-              <Link href="/" className="pt-16">
+              <Link href="/" className="pt-16 hover:text-primary">
                 <h1 className="text-4xl font-bold uppercase mb-6">
                   {t("common.brand")}
                 </h1>
