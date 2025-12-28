@@ -142,17 +142,17 @@ const Puzzle = () => {
     );
 
   return (
-    <main className="container flex-1 mx-auto">
+    <main className="container flex-1 px-4 mx-auto ">
       <Grid />
 
-      <div className="flex w-3/4 mt-4 mx-auto justify-between">
-        <div>
+      <div className="flex flex-col lg:flex-row w-full lg:w-3/4 mt-4 mx-auto justify-between">
+        <div className="text-center lg:text-left">
           <h2 className="text-xl font-bold">{puzzle.title}</h2>
           <h3>{puzzle.attribution.photographer}</h3>
           <p>{puzzle.attribution.source}</p>
         </div>
 
-        <div className="flex gap-2 items-center h-fit">
+        <div className="flex flex-col lg:flex-row gap-2 items-center h-fit mt-6 lg:mt-0">
           <span className="font-bold">{`${t(
             "puzzle.time_spent"
           )} - ${formatTimeToTimeSpent(timeSpent)}`}</span>
