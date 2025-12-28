@@ -149,7 +149,13 @@ const Puzzle = () => {
         <div className="text-center lg:text-left">
           <h2 className="text-xl font-bold">{puzzle.title}</h2>
           <h3>{puzzle.attribution.photographer}</h3>
-          <p>{puzzle.attribution.source}</p>
+          <a
+            href={puzzle.attribution.source_url}
+            className="hover:text-primary"
+            target="_blank"
+          >
+            {puzzle.attribution.source}
+          </a>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-2 items-center h-fit mt-6 lg:mt-0">

@@ -32,9 +32,6 @@ const Grid = () => {
   const solution = usePuzzleStore((state) => state.solution);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
   const isWin = usePuzzleStore((state) => state.isWin);
-  const timeSpentItervalId = usePuzzleStore(
-    (state) => state.timeSpentItervalId
-  );
 
   const setPieces = usePuzzleStore((state) => state.setPieces);
   const setSolution = usePuzzleStore((state) => state.setSolution);
@@ -69,25 +66,18 @@ const Grid = () => {
 
   useEffect(() => {
     const setupGrid = () => {
-      const { pieces: _pieces, solution: _solution } =
-        generateGrid(TOTAL_PIECES);
+      const { pieces, solution } = generateGrid(TOTAL_PIECES);
+      setSolution(solution);
 
-      const _solutionCopy = [..._solution]; /// temporary for testing purposes
-      _solutionCopy[0] = {
-        id: crypto.randomUUID(),
-        position: 1,
-        currentPosition: 2,
-      };
-
-      _solutionCopy[1] = {
-        id: crypto.randomUUID(),
-        position: 2,
-        currentPosition: 1,
-      };
-
-      setPieces(_solutionCopy); // temp
-      restorePuzzleStateFromGameSession();
-      setSolution(_solution);
+      // Check for saved game session first
+      const gameSession = getGameSessionFromLocalStorage();
+      if (gameSession && gameSession.piece_positions.length > 0) {
+        // Restore from saved session
+        setPieces(gameSession.piece_positions);
+      } else {
+        // Set initial scrambled pieces
+        setPieces(pieces);
+      }
     };
 
     setupGrid();
@@ -98,7 +88,7 @@ const Grid = () => {
     saveGameSession();
 
     if (pieces.length > 0) {
-      const result = checkWinCondition();
+      const result = checkWinCondition(pieces);
       if (result && !isWin) {
         handleWin();
       }
@@ -106,12 +96,6 @@ const Grid = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pieces]);
-
-  function restorePuzzleStateFromGameSession() {
-    const gameSession = getGameSessionFromLocalStorage();
-    if (!gameSession) return;
-    setPieces(gameSession.piece_positions);
-  }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;

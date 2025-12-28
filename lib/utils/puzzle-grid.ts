@@ -25,7 +25,7 @@ export function getProgress(currentPieces: Piece[], solution: Piece[]) {
   return (correct / total) * 100;
 }
 
-function shufflePieces(pieces: Array<object>, size: number) {
+function shufflePieces(pieces: Array<object>, size: number): Piece[] {
   // make array [1,2,3,4,5,6,7,8,9]
   const positions = Array.from({ length: size }, (_, i) => i + 1);
 
@@ -35,9 +35,13 @@ function shufflePieces(pieces: Array<object>, size: number) {
     [positions[i], positions[j]] = [positions[j], positions[i]];
   }
 
+  const shuffledPieces = pieces.map((item, index) => {
+    return {
+      ...item,
+      currentPosition: positions[index],
+    };
+  }) as Piece[];
+
   // assign each shuffled position
-  return pieces.map((item, index) => ({
-    ...item,
-    currentPosition: positions[index],
-  }));
+  return shuffledPieces;
 }
