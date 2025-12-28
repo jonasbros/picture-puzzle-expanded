@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { formatTimeToTimeSpent } from '@/lib/utils/dayjs';
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { formatTimeToTimeSpent } from "@/lib/utils/dayjs";
 
-import { getPuzzleBySlug } from '@/lib/actions/puzzles';
-import { getByPuzzleId } from '@/lib/actions/local-leaderboards';
+import { getPuzzleBySlug } from "@/lib/actions/puzzles";
+import { getByPuzzleId } from "@/lib/actions/local-leaderboards";
 
-import { LocalLeaderboard } from '@/lib/types/leaderboard';
-import { Puzzle } from '@/lib/types/puzzle';
+import { LocalLeaderboard } from "@/lib/types/leaderboard";
+import { Puzzle } from "@/lib/types/puzzle";
 
 const Leaderboard = () => {
   const t = useTranslations();
@@ -45,7 +45,7 @@ const Leaderboard = () => {
   if (!leaderboards.length && !puzzle) {
     return (
       <main className="container h-full mx-auto">
-        <p className="text-lg font-bold text-center">{t('common.loading')}</p>
+        <p className="text-lg font-bold text-center">{t("common.loading")}</p>
       </main>
     );
   }
@@ -55,7 +55,7 @@ const Leaderboard = () => {
       {puzzle && (
         <h2 className="text-xl text-center font-bold mb-4">
           <Link href={`/puzzle/${puzzle.slug}`}>
-            {`${t('common.leaderboards')} - ${puzzle.title}`}
+            {`${t("common.leaderboards")} - ${puzzle.title}`}
           </Link>
         </h2>
       )}
@@ -64,9 +64,9 @@ const Leaderboard = () => {
         <table className="table table-zebra">
           <thead>
             <tr>
-              <th>{t('common.rank')}</th>
-              <th>{t('common.name')}</th>
-              <th>{t('puzzle.spent_time')}</th>
+              <th>{t("common.rank")}</th>
+              <th>{t("common.name")}</th>
+              <th>{t("puzzle.spent_time")}</th>
             </tr>
           </thead>
           <tbody>

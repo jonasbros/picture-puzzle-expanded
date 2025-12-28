@@ -44,12 +44,20 @@ const HomePuzzleOfDay = () => {
           <p>{dailyPuzzle.attribution.photographer}</p>
           <p>{dailyPuzzle.attribution.source}</p>
         </div>
-        <Link
-          href={`/puzzle/${dailyPuzzle.slug}`}
-          className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"
-        >
-          {t("homepage.play_now")}
-        </Link>{" "}
+        <div className="flex gap-2">
+          <Link
+            href={`/puzzle/${dailyPuzzle.slug}`}
+            className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"
+          >
+            {t("homepage.play_now")}
+          </Link>
+          <Link
+            href={`/puzzle/${dailyPuzzle.slug}/leaderboard`}
+            className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"
+          >
+            {t("common.leaderboards")}
+          </Link>
+        </div>
       </div>
     </div>
   );
