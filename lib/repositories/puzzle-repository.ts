@@ -89,6 +89,7 @@ export class PuzzleRepository implements IPuzzleRepository {
         title: data.title,
         url: data.url,
         attribution: data.attribution || {},
+        slug: "",
       })
       .select()
       .single();

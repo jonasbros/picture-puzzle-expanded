@@ -1,26 +1,26 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { Database } from "@/lib/types/supabase";
+import { Database, Json } from "@/lib/types/supabase";
 import {
   CreateUserInput,
   UpdateUserInput,
-  UpdateUsernameInput,
+  // UpdateUsernameInput,
 } from "@/lib/validations/user";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
-type UpdateUsernameResult = {
-  success: boolean;
-  username: string | null;
-  username_duplicate: number | null;
-  message: string;
-};
+// type UpdateUsernameResult = {
+//   success: boolean;
+//   username: string | null;
+//   username_duplicate: number | null;
+//   message: string;
+// };
 
 export interface IUserRepository {
   create(data: CreateUserInput): Promise<User>;
   update(id: string, data: UpdateUserInput): Promise<User>;
-  updateUsername(
-    id: string,
-    data: UpdateUsernameInput
-  ): Promise<UpdateUsernameResult>;
+  // updateUsername(
+  //   id: string,
+  //   data: UpdateUsernameInput
+  // ): Promise<UpdateUsernameResult>;
   getById(id: string): Promise<User | null>;
 }
 
@@ -47,7 +47,7 @@ export class UserRepository implements IUserRepository {
         is_guest: data.is_guest || false,
         username_duplicate: usernameDuplicate,
         avatar: data.avatar || null,
-        preferences: data.preferences || null,
+        preferences: (data.preferences || {}) as Json,
       })
       .select()
       .single();
@@ -57,12 +57,14 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(id: string, data: UpdateUserInput): Promise<User> {
-    const updateData: Record<string, any> = {};
+    const updateData: Partial<
+      Pick<User, "email" | "avatar" | "preferences" | "username">
+    > = {};
 
     if (data.email !== undefined) updateData.email = data.email;
     if (data.avatar !== undefined) updateData.avatar = data.avatar;
-    if (data.preferences !== undefined)
-      updateData.preferences = data.preferences;
+    if (data.preferences !== undefined && data.preferences !== null)
+      updateData.preferences = data.preferences as Json;
 
     // Handle username separately if provided (without using the function)
     if (data.username !== undefined) updateData.username = data.username;
@@ -78,21 +80,21 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
-  async updateUsername(
-    id: string,
-    data: UpdateUsernameInput
-  ): Promise<UpdateUsernameResult> {
-    const { data: result, error } = await this.supabase.rpc(
-      "update_user_username",
-      {
-        p_user_id: id,
-        p_new_username: data.username,
-      }
-    );
+  // async updateUsername(
+  //   id: string,
+  //   data: UpdateUsernameInput
+  // ): Promise<UpdateUsernameResult> {
+  //   const { data: result, error } = await this.supabase.rpc(
+  //     "update_username", // Updated function name
+  //     {
+  //       p_user_id: id,
+  //       p_new_username: data.username,
+  //     }
+  //   );
 
-    if (error) throw error;
-    return result[0]; // RPC returns array, take first result
-  }
+  //   if (error) throw error;
+  //   return result[0]; // RPC returns array, take first result
+  // }
 
   async getById(id: string): Promise<User | null> {
     const { data: user, error } = await this.supabase

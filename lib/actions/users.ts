@@ -48,36 +48,36 @@ export async function updateUserAction(id: string, data: UpdateUserInput) {
   }
 }
 
-export async function updateUsernameAction(
-  id: string,
-  data: UpdateUsernameInput
-) {
-  try {
-    const supabase = await createClient();
-    const userService = createUserService(supabase);
+// export async function updateUsernameAction(
+//   id: string,
+//   data: UpdateUsernameInput
+// ) {
+//   try {
+//     const supabase = await createClient();
+//     const userService = createUserService(supabase);
 
-    const result = await userService.updateUsername(id, data);
+//     const result = await userService.updateUsername(id, data);
 
-    if (!result.success) {
-      return {
-        success: false,
-        error: result.message,
-      };
-    }
+//     if (!result.success) {
+//       return {
+//         success: false,
+//         error: result.message,
+//       };
+//     }
 
-    revalidatePath("/users");
-    revalidatePath(`/users/${id}`);
+//     revalidatePath("/users");
+//     revalidatePath(`/users/${id}`);
 
-    return { success: true, data: result };
-  } catch (error) {
-    console.error("Update username error:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error ? error.message : "Failed to update username",
-    };
-  }
-}
+//     return { success: true, data: result };
+//   } catch (error) {
+//     console.error("Update username error:", error);
+//     return {
+//       success: false,
+//       error:
+//         error instanceof Error ? error.message : "Failed to update username",
+//     };
+//   }
+// }
 
 export async function getUserByIdAction(id: string) {
   try {

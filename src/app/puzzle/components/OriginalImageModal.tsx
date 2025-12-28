@@ -15,7 +15,11 @@ const OriginalImageModal = ({
     <>
       <button
         className="btn btn-primary uppercase transform transition-transform hover:scale-105"
-        onClick={() => document.getElementById("my_modal_2")!.showModal()}
+        onClick={() =>
+          (
+            document.getElementById("my_modal_2") as HTMLDialogElement
+          ).showModal()
+        }
       >
         {t("puzzle.show_original_image")}
       </button>
