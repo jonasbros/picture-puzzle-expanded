@@ -1,28 +1,14 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { getDailyPuzzle } from "@/lib/actions/puzzles";
-import { Puzzle } from "@/lib/types/puzzle";
 
-const HomePuzzleOfDay = () => {
-  const t = useTranslations();
-  const [dailyPuzzle, setDailyPuzzle] = useState<Puzzle | null | undefined>(
-    null
-  );
+const HomePuzzleOfDay = async () => {
+  const t = await getTranslations();
+  const { data: dailyPuzzle, error } = await getDailyPuzzle();
 
-  useEffect(() => {
-    const _getDailyPuzzle = async () => {
-      const { data: puzzle } = await getDailyPuzzle();
-      setDailyPuzzle(puzzle);
-    };
-
-    _getDailyPuzzle();
-  }, []);
-
-  if (!dailyPuzzle) return <div>{t("common.loading")}</div>;
+  if (error) return <div>{t("common.errors.generic")}</div>;
+  if (!dailyPuzzle) return <div>{t("common.errors.generic")}</div>;
 
   return (
     <div className="block w-full h-fit bg-base-300 rounded-lg p-4 shadow-md">
