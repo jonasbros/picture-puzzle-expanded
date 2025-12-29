@@ -6,8 +6,8 @@ export default function Error() {
   const t = useTranslations();
 
   return (
-    <div className="block w-full h-fit bg-base-300 rounded-lg p-4 shadow-md">
-      <p className="text-xl font-bold text-center">
+    <div className="block w-full h-fit">
+      <p className="text-xl font-bold text-center text-error">
         {t("common.errors.generic")}
       </p>
     </div>

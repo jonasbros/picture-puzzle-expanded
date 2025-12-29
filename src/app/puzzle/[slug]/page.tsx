@@ -80,18 +80,19 @@ const Puzzle = () => {
     getPuzzle();
 
     return () => {
-      setTimeSpent(0);
+      clearGameSessionSaveIntervalId();
+      setGameSessionSaveIntervalId(null);
       clearTimeSpentItervalId();
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  // save game session every 1s
+  // Setup game session saving interval when puzzle is loaded
   useEffect(() => {
-    if (!puzzle) return;
-    if (gameSessionSaveIntervalId) return;
+    if (!puzzle || gameSessionSaveIntervalId) return;
 
-    const GAME_SESSION_SAVE_INTERVAL = 1000;
+    const GAME_SESSION_SAVE_INTERVAL = 5000;
     const _gameSessionSaveIntervalId = setInterval(() => {
       const currentTimeSpent = usePuzzleStore.getState().timeSpent;
       const currentPieces = usePuzzleStore.getState().pieces;
@@ -114,9 +115,8 @@ const Puzzle = () => {
       clearGameSessionSaveIntervalId();
       setGameSessionSaveIntervalId(null);
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  }, [puzzle]);
 
   function resetGameStates() {
     setPuzzle(null);

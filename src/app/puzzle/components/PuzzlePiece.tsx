@@ -26,7 +26,6 @@ const PuzzlePiece = memo(function PuzzlePiece({ piece }: { piece: Piece }) {
   };
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
-  const isWin = usePuzzleStore((state) => state.isWin);
 
   return (
     <div
@@ -35,13 +34,12 @@ const PuzzlePiece = memo(function PuzzlePiece({ piece }: { piece: Piece }) {
       {...listeners}
       className={`
       ${styles[`puzzle-piece__position-${piece.currentPosition}`]} 
-      ${!isWin && "border-[0.5]"}
-      flex items-center justify-center text-xs font-mono cursor-pointer bg-size-[1600%_900%] text-black font-bold border-base-content`}
+      flex items-center justify-center text-xs font-mono cursor-pointer bg-size-[1200%_700%] text-black font-bold border-base-content`}
       style={{
         transform: transform
           ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
           : undefined,
-        minHeight: "20px",
+        // minHeight: "20px",
         backgroundImage: `url(${puzzle && puzzle.url})`,
         backgroundColor: isOver ? "#ddd" : "transparent",
       }}

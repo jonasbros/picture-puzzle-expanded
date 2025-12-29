@@ -23,9 +23,9 @@ import {
 } from "@/lib/utils/game-session";
 
 const Grid = () => {
-  // Calculate grid dimensions (16 columns x 9 rows = 144 pieces)e
-  const GRID_COLS = 16;
-  const GRID_ROWS = 9;
+  // Calculate grid dimensions (12 columns x 7 rows = 84 pieces)
+  const GRID_COLS = 12;
+  const GRID_ROWS = 7;
   const TOTAL_PIECES = Math.floor(GRID_COLS * GRID_ROWS);
 
   const pieces = usePuzzleStore((state) => state.pieces);
@@ -154,12 +154,12 @@ const Grid = () => {
       onDragEnd={handleDragEnd}
     >
       <div
-        className={`${styles.gridContainer} w-full lg:w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none`}
+        className={`${styles.gridContainer} w-full lg:w-3/4 mx-auto rounded-lg border-2 border-base-content overflow-hidden select-none touch-none`}
         style={{
           display: "grid",
           gridTemplateColumns: `repeat(${GRID_COLS}, 1fr)`,
           gridTemplateRows: `repeat(${GRID_ROWS}, 1fr)`,
-          aspectRatio: "16/9",
+          aspectRatio: "12/7",
         }}
       >
         {pieces.map((piece, gridIndex) => (

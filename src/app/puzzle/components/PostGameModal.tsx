@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import { redirect, usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { formatTimeToTimeSpent } from '@/lib/utils/dayjs';
-import { signInAnonymously } from '@/lib/actions/auth';
-import { createGameSession } from '@/lib/actions/game-sessions';
-import { createLocalLeaderboardEntryAction } from '@/lib/actions/local-leaderboards';
-import usePuzzleStore from '@/lib/stores/puzzle-store';
-import { clearGameSessionFromLocalStorage } from '@/lib/utils/game-session';
+import { useState, useEffect, useRef } from "react";
+import { redirect, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { formatTimeToTimeSpent } from "@/lib/utils/dayjs";
+import { signInAnonymously } from "@/lib/actions/auth";
+import { createGameSession } from "@/lib/actions/game-sessions";
+import { createLocalLeaderboardEntryAction } from "@/lib/actions/local-leaderboards";
+import usePuzzleStore from "@/lib/stores/puzzle-store";
+import { clearGameSessionFromLocalStorage } from "@/lib/utils/game-session";
 
 const PostGameModal = ({
   isOpen,
@@ -20,7 +20,7 @@ const PostGameModal = ({
   const modal = useRef<HTMLDialogElement>(null);
   const [isInputsDisabled, setIsInputsDisabled] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
@@ -31,14 +31,13 @@ const PostGameModal = ({
   }, [isOpen]);
 
   async function postGameProcess(formData: FormData) {
-    const username = formData.get('username') as string;
+    const username = formData.get("username") as string;
     if (!username) {
       setHasError(true);
-      setErrorMessage('Username is required!');
+      setErrorMessage("Username is required!");
       return;
     }
 
-    setIsInputsDisabled(true);
     const { user } = await signInAnonymously({
       options: {
         data: {
@@ -48,13 +47,13 @@ const PostGameModal = ({
     });
 
     if (!user) {
-      console.error('failed to fetch user');
+      console.error("failed to fetch user");
       return;
     }
 
     if (!puzzle) {
       // todo: proper error handling
-      console.error('puzzle not found');
+      console.error("puzzle not found");
       return;
     }
 
@@ -66,7 +65,7 @@ const PostGameModal = ({
       completion_percentage: 100,
       mmr_change: 0,
       is_finished: true,
-      difficulty_level: 'hard',
+      difficulty_level: "hard",
     });
 
     if (!gameSession.success) {
@@ -80,7 +79,7 @@ const PostGameModal = ({
       puzzle_id: puzzle.id,
       progress_percentage: 100,
       spent_time_ms: finalTimeSpent,
-      difficulty_level: 'hard',
+      difficulty_level: "hard",
     });
 
     if (!localLeaderboard.success) {
@@ -107,10 +106,10 @@ const PostGameModal = ({
           </form>
 
           <h3 className="font-bold text-lg text-center uppercase mb-4">
-            {t('puzzle.you_won')}
+            {t("puzzle.you_won")}
           </h3>
 
-          <p className="text-center">{t('puzzle.your_time')}</p>
+          <p className="text-center">{t("puzzle.your_time")}</p>
           <p className="text-2xl font-bold text-center mb-4">
             {`${formatTimeToTimeSpent(finalTimeSpent)}`}
           </p>
@@ -120,8 +119,8 @@ const PostGameModal = ({
               <input
                 name="username"
                 type="text"
-                className={`input w-72 ${hasError ? 'input-error' : 'mb-2'}`}
-                placeholder={t('puzzle.name_in_leaderboards').toUpperCase()}
+                className={`input w-72 ${hasError ? "input-error" : "mb-2"}`}
+                placeholder={t("puzzle.name_in_leaderboards").toUpperCase()}
                 disabled={isInputsDisabled}
                 onChange={() => {
                   setHasError(false);
@@ -129,10 +128,14 @@ const PostGameModal = ({
               />
               {hasError && <p className="text-error mb-2">{errorMessage}</p>}
 
-              <button className="btn btn-primary" disabled={isInputsDisabled}>
+              <button
+                className="btn btn-primary"
+                disabled={isInputsDisabled}
+                onClick={() => setIsInputsDisabled(true)}
+              >
                 {!isInputsDisabled
-                  ? t('common.submit')
-                  : t('common.submitting')}
+                  ? t("common.submit")
+                  : t("common.submitting")}
               </button>
             </fieldset>
           </form>
