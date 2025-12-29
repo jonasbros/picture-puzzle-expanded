@@ -131,7 +131,7 @@ const PostGameModal = ({
               <button
                 className="btn btn-primary"
                 disabled={isInputsDisabled}
-                onClick={() => setIsInputsDisabled(true)}
+                onClick={() => setTimeout(() => setIsInputsDisabled(true), 200)}
               >
                 {!isInputsDisabled
                   ? t("common.submit")
