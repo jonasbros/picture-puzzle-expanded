@@ -18,6 +18,7 @@ const notoSans = Noto_Sans({
 export const metadata: Metadata = {
   title: "SKRAMBOL",
   description: "Scrambled image puzzle game. How fast can you solve them?",
+  other: { "google-adsense-account": "ca-pub-3150400026189305" },
 };
 
 export default function RootLayout({
