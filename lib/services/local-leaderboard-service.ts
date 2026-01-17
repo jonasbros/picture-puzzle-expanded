@@ -1,16 +1,16 @@
-import { SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '@/lib/types/supabase';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { Database } from "@/lib/types/supabase";
 import {
   LocalLeaderboardRepository,
   ILocalLeaderboardRepository,
-} from '@/lib/repositories/local-leaderboard-repository';
+} from "@/lib/repositories/local-leaderboard-repository";
 import {
   createLocalLeaderboardSchema,
   CreateLocalLeaderboardInput,
-} from '@/lib/validations/local-leaderboard';
+} from "@/lib/validations/local-leaderboard";
 
 type LocalLeaderboard =
-  Database['public']['Tables']['local_leaderboards']['Row'];
+  Database["public"]["Tables"]["local_leaderboards"]["Row"];
 
 export interface ILocalLeaderboardService {
   createEntry(data: CreateLocalLeaderboardInput): Promise<LocalLeaderboard>;
@@ -33,27 +33,27 @@ export class LocalLeaderboardService implements ILocalLeaderboardService {
 
     // Business logic: Verify puzzle exists
     const { data: puzzle, error: puzzleError } = await this.supabase
-      .from('puzzles')
-      .select('id')
-      .eq('id', validatedData.puzzle_id)
-      .is('deleted_at', null)
+      .from("puzzles")
+      .select("id")
+      .eq("id", validatedData.puzzle_id)
+      .is("deleted_at", null)
       .single();
 
     if (puzzleError || !puzzle) {
-      throw new Error('Puzzle not found');
+      throw new Error("Puzzle not found");
     }
 
     // Business logic: If user_id provided, verify user exists
     if (validatedData.user_id) {
       const { data: user, error: userError } = await this.supabase
-        .from('users')
-        .select('id')
-        .eq('id', validatedData.user_id)
-        .is('deleted_at', null)
+        .from("users")
+        .select("id")
+        .eq("id", validatedData.user_id)
+        .is("deleted_at", null)
         .single();
 
       if (userError || !user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
     }
 

@@ -53,7 +53,7 @@ const Leaderboard = () => {
   return (
     <main className="container min-h-full h-full mx-auto px-4">
       {puzzle && (
-        <h2 className="text-xl text-center font-bold mb-4">
+        <h2 className="text-xl text-center font-bold mb-4 max-w-sm mx-auto">
           <Link href={`/puzzle/${puzzle.slug}`} className="hover:text-primary">
             {`${t("common.leaderboards")} - ${puzzle.title}`}
           </Link>
