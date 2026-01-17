@@ -147,7 +147,9 @@ const Puzzle = () => {
 
       <div className="flex flex-col lg:flex-row w-full lg:w-3/4 mt-4 mx-auto justify-between">
         <div className="text-center lg:text-left">
-          <h2 className="text-xl font-bold">{puzzle.title}</h2>
+          <h2 className="text-xl font-bold max-w-sm truncate">
+            {puzzle.title}
+          </h2>
           <h3>{puzzle.attribution.photographer}</h3>
           <a
             href={puzzle.attribution.source_url}
