@@ -1,19 +1,19 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
-import { getDailyPuzzle } from '@/lib/actions/puzzles'
+import Image from "next/image";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { getDailyPuzzle } from "@/lib/actions/puzzles";
 
 const HomePuzzleOfDay = async () => {
-  const t = await getTranslations()
-  const { data: dailyPuzzle, error } = await getDailyPuzzle()
+  const t = await getTranslations();
+  const { data: dailyPuzzle, error } = await getDailyPuzzle();
 
-  if (error) return <div>{t('common.errors.generic')}</div>
-  if (!dailyPuzzle) return <div>{t('common.errors.generic')}</div>
+  if (error) return <div>{t("common.errors.generic")}</div>;
+  if (!dailyPuzzle) return <div>{t("common.errors.generic")}</div>;
 
   return (
     <div className="w-full h-fit bg-base-300 rounded-lg p-4 shadow-md">
       <h1 className="text-2xl text-center lg:text-left font-bold uppercase mb-2">
-        {t('dashboard.image_of_the_day')}
+        {t("dashboard.image_of_the_day")}
       </h1>
       <div className="relative w-full h-[300px] rounded-lg overflow-hidden mb-2">
         <Image
@@ -46,18 +46,18 @@ const HomePuzzleOfDay = async () => {
             href={`/puzzle/${dailyPuzzle.slug}`}
             className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"
           >
-            {t('homepage.play_now')}
+            {t("homepage.play_now")}
           </Link>
           <Link
             href={`/puzzle/${dailyPuzzle.slug}/leaderboard`}
             className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"
           >
-            {t('common.leaderboards')}
+            {t("common.leaderboards")}
           </Link>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePuzzleOfDay
+export default HomePuzzleOfDay;

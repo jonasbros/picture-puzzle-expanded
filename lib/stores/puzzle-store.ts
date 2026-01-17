@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-import type { Puzzle, Piece } from '@/lib/types/puzzle';
+import type { Puzzle, Piece } from "@/lib/types/puzzle";
 
 type Interval = NodeJS.Timeout | null;
 
