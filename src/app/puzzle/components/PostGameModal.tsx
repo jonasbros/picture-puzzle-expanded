@@ -21,6 +21,7 @@ const PostGameModal = ({
   const [isInputsDisabled, setIsInputsDisabled] = useState<boolean>(false);
   const [hasError, setHasError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
@@ -37,6 +38,8 @@ const PostGameModal = ({
       setErrorMessage("Username is required!");
       return;
     }
+
+    setTimeout(() => setIsInputsDisabled(true), 200);
 
     const { user } = await signInAnonymously({
       options: {
@@ -122,17 +125,15 @@ const PostGameModal = ({
                 className={`input w-72 ${hasError ? "input-error" : "mb-2"}`}
                 placeholder={t("puzzle.name_in_leaderboards").toUpperCase()}
                 disabled={isInputsDisabled}
-                onChange={() => {
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
                   setHasError(false);
                 }}
               />
               {hasError && <p className="text-error mb-2">{errorMessage}</p>}
 
-              <button
-                className="btn btn-primary"
-                disabled={isInputsDisabled}
-                onClick={() => setTimeout(() => setIsInputsDisabled(true), 200)}
-              >
+              <button className="btn btn-primary" disabled={isInputsDisabled}>
                 {!isInputsDisabled
                   ? t("common.submit")
                   : t("common.submitting")}
