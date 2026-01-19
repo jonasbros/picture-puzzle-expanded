@@ -20,6 +20,7 @@ import usePuzzleStore from "@/lib/stores/puzzle-store";
 import {
   setGameSessionFromLocalStorage,
   getGameSessionFromLocalStorage,
+  clearGameSessionFromLocalStorage,
 } from "@/lib/utils/game-session";
 
 const Grid = () => {
@@ -147,6 +148,7 @@ const Grid = () => {
   function handleWin() {
     setFinalTimeSpent(timeSpent);
     clearTimeSpentItervalId();
+    clearGameSessionFromLocalStorage();
 
     setTimeout(() => {
       setIsWin(true);
