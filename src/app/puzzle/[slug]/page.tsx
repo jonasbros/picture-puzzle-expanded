@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { formatTimeToTimeSpent } from "@/lib/utils/dayjs";
@@ -27,9 +27,6 @@ const Puzzle = () => {
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const pieces = usePuzzleStore((state) => state.pieces);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
-  const gameSessionSaveIntervalId = usePuzzleStore(
-    (state) => state.gameSessionSaveIntervalId
-  );
 
   const isWin = usePuzzleStore((state) => state.isWin);
   const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
@@ -48,25 +45,48 @@ const Puzzle = () => {
     (state) => state.clearGameSessionSaveIntervalId
   );
 
-  const getPuzzle = async () => {
+  const getPuzzle = useCallback(async () => {
     const { success, data, error } = await getPuzzleBySlug(slug as string);
     if (success && data) {
       setPuzzle(data);
     } else {
       setErrorMessage(error || "");
     }
-  };
+  }, [setPuzzle, slug]);
 
-  const runGameTimer = (restoredTime: number = 0) => {
-    const START_TIME = Date.now();
-    const TIME_TICK = 100;
+  const runGameTimer = useCallback(
+    (restoredTime: number = 0) => {
+      const START_TIME = Date.now();
+      const TIME_TICK = 100;
 
-    const timeSpentInterval = setInterval(() => {
-      const currentTime = restoredTime + (Date.now() - START_TIME);
-      setTimeSpent(currentTime);
-    }, TIME_TICK);
+      const timeSpentInterval = setInterval(() => {
+        const currentTime = restoredTime + (Date.now() - START_TIME);
+        setTimeSpent(currentTime);
+      }, TIME_TICK);
 
-    setTimeSpentItervalId(timeSpentInterval);
+      setTimeSpentItervalId(timeSpentInterval);
+    },
+    [setTimeSpent, setTimeSpentItervalId]
+  );
+
+  const resetGameStates = useCallback(() => {
+    setPuzzle(null);
+    setIsWin(false);
+    setTimeSpent(0);
+    clearTimeSpentItervalId();
+    clearGameSessionSaveIntervalId();
+  }, [
+    clearGameSessionSaveIntervalId,
+    clearTimeSpentItervalId,
+    setIsWin,
+    setPuzzle,
+    setTimeSpent,
+  ]);
+
+  const handleRestart = () => {
+    // reload the page to restart the puzzle
+    clearGameSessionFromLocalStorage();
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -77,26 +97,37 @@ const Puzzle = () => {
 
     setTimeSpent(restoredTime);
     runGameTimer(restoredTime);
-    getPuzzle();
+
+    setTimeout(() => {
+      getPuzzle();
+    }, 0);
 
     return () => {
       clearGameSessionSaveIntervalId();
       setGameSessionSaveIntervalId(null);
       clearTimeSpentItervalId();
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+  }, [
+    clearGameSessionSaveIntervalId,
+    clearTimeSpentItervalId,
+    getPuzzle,
+    resetGameStates,
+    runGameTimer,
+    setGameSessionSaveIntervalId,
+    setTimeSpent,
+    slug,
+  ]);
 
   // Setup game session saving interval when puzzle is loaded
   useEffect(() => {
-    if (!puzzle || gameSessionSaveIntervalId) return;
+    if (!puzzle) return;
 
     const GAME_SESSION_SAVE_INTERVAL = 5000;
     const _gameSessionSaveIntervalId = setInterval(() => {
       const currentTimeSpent = usePuzzleStore.getState().timeSpent;
       const currentPieces = usePuzzleStore.getState().pieces;
 
+      // todo: move game sessions to server side
       setGameSessionFromLocalStorage({
         user_id: null,
         puzzle_id: puzzle.id,
@@ -115,27 +146,13 @@ const Puzzle = () => {
       clearGameSessionSaveIntervalId();
       setGameSessionSaveIntervalId(null);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [puzzle]);
-
-  function resetGameStates() {
-    setPuzzle(null);
-    setIsWin(false);
-    setTimeSpent(0);
-    clearTimeSpentItervalId();
-    clearGameSessionSaveIntervalId();
-  }
-
-  function handleRestart() {
-    // Simply reload the page to restart the puzzle
-    clearGameSessionFromLocalStorage();
-    window.location.reload();
-  }
+  }, [clearGameSessionSaveIntervalId, puzzle, setGameSessionSaveIntervalId]);
 
   if (!puzzle)
     return (
       <main className="container flex-1 mx-auto text-center">Loading...</main>
     );
+
   if (errorMessage)
     return (
       <main className="container flex-1 mx-auto">Error: {errorMessage}</main>

@@ -28,6 +28,7 @@ const Grid = () => {
   const GRID_ROWS = 7;
   const TOTAL_PIECES = Math.floor(GRID_COLS * GRID_ROWS);
 
+  const puzzle = usePuzzleStore((state) => state.puzzle);
   const pieces = usePuzzleStore((state) => state.pieces);
   const solution = usePuzzleStore((state) => state.solution);
   const timeSpent = usePuzzleStore((state) => state.timeSpent);
@@ -71,7 +72,12 @@ const Grid = () => {
 
       // Check for saved game session first
       const gameSession = getGameSessionFromLocalStorage();
-      if (gameSession && gameSession.piece_positions.length > 0) {
+      if (
+        puzzle &&
+        gameSession &&
+        gameSession.puzzle_id == puzzle.id &&
+        gameSession.piece_positions.length > 0
+      ) {
         // Restore from saved session
         setPieces(gameSession.piece_positions);
       } else {
