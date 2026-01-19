@@ -32,6 +32,7 @@ interface PuzzleActions {
   clearTimeSpentItervalId: () => void;
   setGameSessionSaveIntervalId: (intervalId: Interval) => void;
   clearGameSessionSaveIntervalId: () => void;
+  resetPuzzleStoreState: () => void;
 }
 
 type PuzzleStore = PuzzleState & PuzzleActions;
@@ -81,6 +82,30 @@ const usePuzzleStore = create<PuzzleStore>((set) => ({
     set((state) => {
       clearInterval(state.gameSessionSaveIntervalId as NodeJS.Timeout);
       return { gameSessionSaveIntervalId: null };
+    }),
+
+  resetPuzzleStoreState: () =>
+    set((state) => {
+      // Clear any active intervals
+      if (state.timeSpentItervalId) {
+        clearInterval(state.timeSpentItervalId as NodeJS.Timeout);
+      }
+      if (state.gameSessionSaveIntervalId) {
+        clearInterval(state.gameSessionSaveIntervalId as NodeJS.Timeout);
+      }
+
+      // Reset to initial state
+      return {
+        puzzle: null,
+        pieces: [],
+        solution: [],
+        timeSpent: 0,
+        finalTimeSpent: 0,
+        isWin: false,
+        progress: 0,
+        timeSpentItervalId: null,
+        gameSessionSaveIntervalId: null,
+      };
     }),
 }));
 

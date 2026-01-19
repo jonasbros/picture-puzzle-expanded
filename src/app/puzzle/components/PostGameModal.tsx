@@ -25,6 +25,9 @@ const PostGameModal = ({
 
   const puzzle = usePuzzleStore((state) => state.puzzle);
   const finalTimeSpent = usePuzzleStore((state) => state.finalTimeSpent);
+  const resetPuzzleStoreState = usePuzzleStore(
+    (state) => state.resetPuzzleStoreState
+  );
 
   useEffect(() => {
     if (!modal) return;
@@ -92,6 +95,7 @@ const PostGameModal = ({
     }
 
     clearGameSessionFromLocalStorage();
+    resetPuzzleStoreState();
     setTimeout(() => {
       redirect(`${pathname}/leaderboard`);
     }, 200);
