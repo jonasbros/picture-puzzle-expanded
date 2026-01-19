@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -18,7 +18,7 @@ const Leaderboard = () => {
   const [leaderboards, setLeaderboards] = useState<LocalLeaderboard[]>([]);
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
 
-  const getPuzzle = async () => {
+  const getPuzzle = useCallback(async () => {
     const { success, data } = await getPuzzleBySlug(slug as string);
 
     if (success && data) {
@@ -26,7 +26,7 @@ const Leaderboard = () => {
     }
 
     return null;
-  };
+  }, [slug]);
 
   useEffect(() => {
     const getLocalLeaderboard = async () => {
@@ -38,10 +38,8 @@ const Leaderboard = () => {
     };
 
     getLocalLeaderboard();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getPuzzle]);
 
-  // convert to suspense?
   if (!leaderboards.length && !puzzle) {
     return (
       <main className="container h-full mx-auto">
