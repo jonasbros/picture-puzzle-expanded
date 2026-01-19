@@ -31,50 +31,72 @@ interface PexelsResponse {
   photos: PexelsPhoto[];
 }
 
+async function fetchPexelsImage(page: number): Promise<PexelsResponse> {
+  const response = await fetch(
+    `https://api.pexels.com/v1/curated?page=${page}&per_page=1`,
+    {
+      headers: {
+        Authorization: PEXELS_API_KEY!,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Pexels API error: ${response.statusText}`);
+  }
+
+  return await response.json();
+}
+
 serve(async (req) => {
   try {
-    // Fetch the first image from Pexels curated endpoint
-    const response = await fetch(
-      "https://api.pexels.com/v1/curated?page=1&per_page=1",
-      {
-        headers: {
-          Authorization: PEXELS_API_KEY!,
-        },
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
+    const MAX_ATTEMPTS = 10; // Try up to 10 different pages
+    let photo: PexelsPhoto | null = null;
+    const attemptedPages: number[] = [];
+
+    // Try to find a unique image
+    for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+      // Generate a random page number between 1 and 100
+      const randomPage = Math.floor(Math.random() * 100) + 1;
+      attemptedPages.push(randomPage);
+
+      const data = await fetchPexelsImage(randomPage);
+
+      if (!data.photos || data.photos.length === 0) {
+        console.log(`No photos on page ${randomPage}, trying next page`);
+        continue;
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Pexels API error: ${response.statusText}`);
-    }
+      const candidatePhoto = data.photos[0];
 
-    const data: PexelsResponse = await response.json();
+      // Check if this image already exists in database
+      const { data: existingPuzzle } = await supabase
+        .from("puzzles")
+        .select("id")
+        .eq("url", candidatePhoto.src.landscape)
+        .single();
 
-    if (!data.photos || data.photos.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No photos returned from Pexels" }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
+      if (!existingPuzzle) {
+        // Found a unique image!
+        photo = candidatePhoto;
+        break;
+      }
+
+      console.log(
+        `Image from page ${randomPage} already exists, trying another page`
       );
     }
 
-    const photo = data.photos[0];
-
-    // Create Supabase client
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-
-    // Check if image already exists
-    const { data: existingPuzzle } = await supabase
-      .from("puzzles")
-      .select("id")
-      .eq("url", photo.src.landscape)
-      .single();
-
-    if (existingPuzzle) {
+    // If we couldn't find a unique image after MAX_ATTEMPTS
+    if (!photo) {
       return new Response(
         JSON.stringify({
-          message: "Image already exists in database",
-          photo_id: photo.id,
+          error: "Could not find a unique image after multiple attempts",
+          attempted_pages: attemptedPages,
         }),
-        { status: 200, headers: { "Content-Type": "application/json" } }
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -105,6 +127,8 @@ serve(async (req) => {
         success: true,
         message: "Successfully inserted new puzzle image",
         puzzle: insertedPuzzle,
+        attempts: attemptedPages.length,
+        attempted_pages: attemptedPages,
       }),
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
