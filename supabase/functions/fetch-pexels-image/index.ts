@@ -6,6 +6,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const COLOR_CHECKER_API = Deno.env.get("COLOR_CHECKER_API"); // Your Vercel API URL
 
 interface PexelsPhoto {
   id: number;
@@ -31,6 +32,40 @@ interface PexelsResponse {
   photos: PexelsPhoto[];
 }
 
+/**
+ * Check if image has dominant color by calling Vercel API
+ */
+async function hasDominantColor(
+  imageUrl: string,
+  threshold = 35,
+): Promise<boolean> {
+  try {
+    const response = await fetch(COLOR_CHECKER_API!, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        imageUrl,
+        threshold,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`Color checker API error: ${response.statusText}`);
+      return false; // If API fails, don't reject the image
+    }
+
+    const data = await response.json();
+    console.log(`Color analysis: ${data.dominantPercentage}% dominant`);
+
+    return data.hasDominantColor;
+  } catch (error) {
+    console.error(`Color analysis failed: ${error.message}`);
+    return false; // If analysis fails, don't reject the image
+  }
+}
+
 async function fetchPexelsImage(page: number): Promise<PexelsResponse> {
   const response = await fetch(
     `https://api.pexels.com/v1/curated?page=${page}&per_page=1`,
@@ -38,7 +73,7 @@ async function fetchPexelsImage(page: number): Promise<PexelsResponse> {
       headers: {
         Authorization: PEXELS_API_KEY!,
       },
-    }
+    },
   );
 
   if (!response.ok) {
@@ -52,19 +87,20 @@ serve(async (req) => {
   try {
     const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
-    const MAX_ATTEMPTS = 10; // Try up to 10 different pages
+    const MAX_ATTEMPTS = 20;
     let photo: PexelsPhoto | null = null;
     const attemptedPages: number[] = [];
+    const rejectedReasons: string[] = [];
 
-    // Try to find a unique image
+    // Try to find a unique image without dominant color
     for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-      // Generate a random page number between 1 and 100
       const randomPage = Math.floor(Math.random() * 100) + 1;
       attemptedPages.push(randomPage);
 
       const data = await fetchPexelsImage(randomPage);
 
       if (!data.photos || data.photos.length === 0) {
+        rejectedReasons.push(`Page ${randomPage}: No photos available`);
         console.log(`No photos on page ${randomPage}, trying next page`);
         continue;
       }
@@ -78,25 +114,35 @@ serve(async (req) => {
         .eq("url", candidatePhoto.src.landscape)
         .single();
 
-      if (!existingPuzzle) {
-        // Found a unique image!
-        photo = candidatePhoto;
-        break;
+      if (existingPuzzle) {
+        rejectedReasons.push(`Page ${randomPage}: Image already exists`);
+        console.log(`Image from page ${randomPage} already exists`);
+        continue;
       }
 
-      console.log(
-        `Image from page ${randomPage} already exists, trying another page`
-      );
+      // Check if image has dominant color (use medium size for faster analysis)
+      const isDominant = await hasDominantColor(candidatePhoto.src.medium, 35);
+
+      if (isDominant) {
+        rejectedReasons.push(`Page ${randomPage}: Dominant color detected`);
+        console.log(`Image from page ${randomPage} has dominant color`);
+        continue;
+      }
+
+      // Found suitable image!
+      photo = candidatePhoto;
+      console.log(`Found suitable image on page ${randomPage}`);
+      break;
     }
 
-    // If we couldn't find a unique image after MAX_ATTEMPTS
     if (!photo) {
       return new Response(
         JSON.stringify({
-          error: "Could not find a unique image after multiple attempts",
+          error: "Could not find suitable image after multiple attempts",
           attempted_pages: attemptedPages,
+          rejected_reasons: rejectedReasons,
         }),
-        { status: 404, headers: { "Content-Type": "application/json" } }
+        { status: 404, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -125,12 +171,11 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Successfully inserted new puzzle image",
+        message: "Successfully inserted puzzle image (no dominant color)",
         puzzle: insertedPuzzle,
         attempts: attemptedPages.length,
-        attempted_pages: attemptedPages,
       }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+      { status: 200, headers: { "Content-Type": "application/json" } },
     );
   } catch (error) {
     console.error("Error:", error);

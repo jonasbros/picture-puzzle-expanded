@@ -70,19 +70,36 @@ const Grid = () => {
       const { pieces, solution } = generateGrid(TOTAL_PIECES);
       setSolution(solution);
 
-      // Check for saved game session first
-      const gameSession = getGameSessionFromLocalStorage();
-      if (
-        puzzle &&
-        gameSession &&
-        gameSession.puzzle_id == puzzle.id &&
-        gameSession.piece_positions.length > 0
-      ) {
-        // Restore from saved session
-        setPieces(gameSession.piece_positions);
+      if (process.env.NODE_ENV !== "development") {
+        // Check for saved game session first
+        const gameSession = getGameSessionFromLocalStorage();
+        if (
+          puzzle &&
+          gameSession &&
+          gameSession.puzzle_id == puzzle.id &&
+          gameSession.piece_positions.length > 0
+        ) {
+          // Restore from saved session
+          setPieces(gameSession.piece_positions);
+        } else {
+          // Set initial scrambled pieces
+          setPieces(pieces);
+        }
       } else {
-        // Set initial scrambled pieces
-        setPieces(pieces);
+        const _solutionCopy = [...solution]; /// temporary for testing purposes
+        _solutionCopy[0] = {
+          id: crypto.randomUUID(),
+          position: 1,
+          currentPosition: 2,
+        };
+
+        _solutionCopy[1] = {
+          id: crypto.randomUUID(),
+          position: 2,
+          currentPosition: 1,
+        };
+
+        setPieces(_solutionCopy); // dev env test state
       }
     };
 

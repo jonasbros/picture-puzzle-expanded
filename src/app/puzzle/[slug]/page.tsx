@@ -120,7 +120,7 @@ const Puzzle = () => {
 
   // Setup game session saving interval when puzzle is loaded
   useEffect(() => {
-    if (!puzzle) return;
+    if (!puzzle || isWin) return;
 
     const GAME_SESSION_SAVE_INTERVAL = 5000;
     const _gameSessionSaveIntervalId = setInterval(() => {
