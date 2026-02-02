@@ -37,7 +37,7 @@ interface PexelsResponse {
  */
 async function hasDominantColor(
   imageUrl: string,
-  threshold = 35,
+  threshold = 25,
 ): Promise<boolean> {
   try {
     const response = await fetch(COLOR_CHECKER_API!, {
