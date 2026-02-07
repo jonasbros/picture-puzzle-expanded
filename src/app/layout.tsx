@@ -35,9 +35,9 @@ export default function RootLayout({
           {" "}
           <NextIntlClientProvider>
             <div className="fixed top-6 right-6 flex gap-4">
-              {/* <span title="Coming Soon!" className="cursor-pointer">
-              {t("puzzle.leaderboards")}
-            </span> */}
+              <Link href="/leaderboards" className="cursor-pointer">
+                {t("common.all_time_leaderboards")}
+              </Link>
               <ThemeSwitch />
             </div>
 
