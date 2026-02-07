@@ -32,17 +32,17 @@ const Puzzle = () => {
   const setPuzzle = usePuzzleStore((state) => state.setPuzzle);
   const setTimeSpent = usePuzzleStore((state) => state.setTimeSpent);
   const setTimeSpentItervalId = usePuzzleStore(
-    (state) => state.setTimeSpentItervalId
+    (state) => state.setTimeSpentItervalId,
   );
   const setGameSessionSaveIntervalId = usePuzzleStore(
-    (state) => state.setGameSessionSaveIntervalId
+    (state) => state.setGameSessionSaveIntervalId,
   );
   const setIsWin = usePuzzleStore((state) => state.setIsWin);
   const clearTimeSpentItervalId = usePuzzleStore(
-    (state) => state.clearTimeSpentItervalId
+    (state) => state.clearTimeSpentItervalId,
   );
   const clearGameSessionSaveIntervalId = usePuzzleStore(
-    (state) => state.clearGameSessionSaveIntervalId
+    (state) => state.clearGameSessionSaveIntervalId,
   );
 
   const getPuzzle = useCallback(async () => {
@@ -66,7 +66,7 @@ const Puzzle = () => {
 
       setTimeSpentItervalId(timeSpentInterval);
     },
-    [setTimeSpent, setTimeSpentItervalId]
+    [setTimeSpent, setTimeSpentItervalId],
   );
 
   const resetGameStates = useCallback(() => {
@@ -146,7 +146,12 @@ const Puzzle = () => {
       clearGameSessionSaveIntervalId();
       setGameSessionSaveIntervalId(null);
     };
-  }, [clearGameSessionSaveIntervalId, puzzle, setGameSessionSaveIntervalId]);
+  }, [
+    clearGameSessionSaveIntervalId,
+    puzzle,
+    setGameSessionSaveIntervalId,
+    isWin,
+  ]);
 
   if (!puzzle)
     return (
@@ -179,7 +184,7 @@ const Puzzle = () => {
 
         <div className="flex flex-col lg:flex-row gap-2 items-center h-fit mt-6 lg:mt-0">
           <span className="font-bold">{`${t(
-            "puzzle.time_spent"
+            "puzzle.time_spent",
           )} - ${formatTimeToTimeSpent(timeSpent)}`}</span>
           <OriginalImageModal imageUrl={puzzle.url} altText={puzzle.title} />
 

@@ -6,7 +6,7 @@ import { createLocalLeaderboardService } from "@/lib/services/local-leaderboard-
 import { CreateLocalLeaderboardInput } from "@/lib/validations/local-leaderboard";
 
 export async function createLocalLeaderboardEntryAction(
-  data: CreateLocalLeaderboardInput
+  data: CreateLocalLeaderboardInput,
 ) {
   try {
     const supabase = await createClient();
@@ -34,4 +34,16 @@ export async function getByPuzzleId(puzzleId: string) {
   const supabase = await createClient();
   const localLeaderboardService = createLocalLeaderboardService(supabase);
   return await localLeaderboardService.getByPuzzleId(puzzleId);
+}
+
+export async function getAllAverageScores() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_all_leaderboard_averages", {
+    limit_count: 100,
+  });
+
+  if (error) {
+    throw error;
+  }
+  return data;
 }
