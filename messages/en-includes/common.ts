@@ -11,6 +11,7 @@ const common = {
     rank: "Rank",
     name: "Name",
     leaderboards: "Leaderboards",
+    all_time_leaderboards: "All Time Leaderboards",
     errors: {
       generic: "An error has occured.",
     },
