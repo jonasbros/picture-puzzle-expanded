@@ -19,8 +19,10 @@ export interface LocalLeaderboard {
   id: string;
   user_id?: string | null; // Nullable for guest users
   name?: string | null; // Guest user name (arcade style)
+  username: string; // For easier access to username without needing to check user object
   puzzle_id: string;
   spent_time_ms: number; // completion time in milliseconds
+  avg_spent_time_ms: number; // average completion time in milliseconds
   progress_percentage: number;
   difficulty_level?: string | null;
   created_at: string;
