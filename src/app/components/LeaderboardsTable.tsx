@@ -28,7 +28,8 @@ const LeaderboardsTable = ({
             </td>
             <td>
               {formatTimeToTimeSpent(
-                leaderboard.spent_time_ms || leaderboard.avg_spent_time_ms,
+                (leaderboard.spent_time_ms as number) ||
+                  (leaderboard.avg_spent_time_ms as number),
               )}
             </td>
           </tr>
