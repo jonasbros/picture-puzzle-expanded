@@ -4,6 +4,7 @@ export enum GuestRoutes {
   AUTH_CALLBACK = "/auth/callback",
   AUTH_ERROR = "/auth/auth-code-error",
   PUZZLE = "/puzzle",
+  ALL_TIME_LEADERBOARD = "/leaderboards",
 }
 
 export enum ProtectedRoutes {
