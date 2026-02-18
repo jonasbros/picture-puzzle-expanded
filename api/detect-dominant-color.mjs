@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { imageUrl, threshold = 35 } = req.body;
+    const { imageUrl, threshold = 25 } = req.body;
 
     if (!imageUrl) {
       return res.status(400).json({ error: "imageUrl is required" });
