@@ -17,6 +17,7 @@ export interface IPuzzleRepository {
   search(query: string): Promise<Puzzle[]>;
   getDailyPuzzle(): Promise<Puzzle | null>;
   getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null>;
+  getPreviousDailyPuzzles(page: number, limit: number): Promise<{ data: DailyPuzzle[]; total: number }>;
 }
 
 export class PuzzleRepository implements IPuzzleRepository {
@@ -167,6 +168,49 @@ export class PuzzleRepository implements IPuzzleRepository {
 
     // Extract puzzle data from the join
     return data?.puzzles as Puzzle;
+  }
+
+  async getPreviousDailyPuzzles(page: number, limit: number): Promise<{ data: DailyPuzzle[]; total: number }> {
+    const today = new Date().toISOString().split("T")[0];
+    const offset = (page - 1) * limit;
+
+    const { data, error, count } = await this.supabase
+      .from("daily_puzzles")
+      .select(
+        `
+        id,
+        puzzle_id,
+        puzzle_date,
+        created_at,
+        puzzles (
+          id,
+          title,
+          url,
+          attribution,
+          slug,
+          created_at,
+          updated_at,
+          deleted_at
+        )
+      `,
+        { count: "exact" }
+      )
+      .is("puzzles.deleted_at", null)
+      .lt("puzzle_date", today)
+      .order("puzzle_date", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+
+    const puzzles: DailyPuzzle[] = (data ?? []).map((row) => ({
+      id: row.id,
+      puzzle_id: row.puzzle_id,
+      puzzle_date: row.puzzle_date,
+      created_at: row.created_at,
+      puzzle: row.puzzles as Puzzle,
+    }));
+
+    return { data: puzzles, total: count ?? 0 };
   }
 
   async getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null> {

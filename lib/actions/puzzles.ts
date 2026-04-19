@@ -148,6 +148,26 @@ export async function getDailyPuzzleWithCountdown() {
   }
 }
 
+export async function getPreviousDailyPuzzles(page: number = 1) {
+  try {
+    const supabase = await createClient();
+    const puzzleService = createPuzzleService(supabase);
+
+    const result = await puzzleService.getPreviousDailyPuzzles(page, 5);
+
+    return { success: true, data: result.data, total: result.total };
+  } catch (error) {
+    console.error("Get previous daily puzzles error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to get previous daily puzzles",
+    };
+  }
+}
+
 export async function getPuzzleBySlug(slug: string) {
   try {
     const supabase = await createClient();
