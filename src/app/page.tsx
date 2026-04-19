@@ -1,15 +1,13 @@
-import { Suspense } from "react";
-import HomePuzzleOfDay from "./components/HomePuzzleOfDay";
-import Loading from "./loading";
+import HomePage from "./home/HomePage";
 
-export default function Home() {
-  return (
-    <main className="container h-full mx-auto pb-16">
-      <div className="flex w-full lg:w-1/2 px-4 mt-4 mx-auto justify-between">
-        <Suspense fallback={<Loading />}>
-          <HomePuzzleOfDay />
-        </Suspense>
-      </div>
-    </main>
-  );
+interface Props {
+  searchParams: Promise<{ page?: string; lbPage?: string }>;
+}
+
+export default async function Home({ searchParams }: Props) {
+  const { page, lbPage } = await searchParams;
+  const pageNumber = Math.max(1, parseInt(page ?? "1", 10) || 1);
+  const lbPageNumber = Math.max(1, parseInt(lbPage ?? "1", 10) || 1);
+
+  return <HomePage page={pageNumber} lbPage={lbPageNumber} />;
 }

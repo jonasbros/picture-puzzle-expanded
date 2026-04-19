@@ -47,3 +47,30 @@ export async function getAllAverageScores() {
   }
   return data;
 }
+
+const LEADERBOARD_PREVIEW_LIMIT = 5;
+
+export async function getLeaderboardPreview(page: number = 1) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("get_all_leaderboard_averages", {
+      limit_count: 100,
+    });
+
+    if (error) throw error;
+
+    const total = data?.length ?? 0;
+    const safePage = Math.max(1, page);
+    const offset = (safePage - 1) * LEADERBOARD_PREVIEW_LIMIT;
+    const entries = (data ?? []).slice(offset, offset + LEADERBOARD_PREVIEW_LIMIT);
+
+    return { success: true, data: entries, total };
+  } catch (error) {
+    console.error("Get leaderboard preview error:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to get leaderboard preview",
+    };
+  }
+}

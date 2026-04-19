@@ -11,8 +11,8 @@ const HomePuzzleOfDay = async () => {
   if (!dailyPuzzle) return <div>{t("common.errors.generic")}</div>;
 
   return (
-    <div className="w-full h-fit bg-base-300 rounded-lg p-4 shadow-md">
-      <h1 className="text-2xl text-center lg:text-left font-bold uppercase mb-2">
+    <div className="w-full h-fit bg-base-300 rounded-lg p-4">
+      <h1 className="text-2xl text-left font-bold uppercase mb-2">
         {t("dashboard.image_of_the_day")}
       </h1>
       <div className="relative w-full h-[300px] rounded-lg overflow-hidden mb-2">
@@ -24,8 +24,8 @@ const HomePuzzleOfDay = async () => {
         />
       </div>
 
-      <div className="flex flex-col items-center lg:items-start lg:flex-row lg:justify-between">
-        <div className="text-center lg:text-left">
+      <div className="flex flex-col items-start">
+        <div className="text-left">
           <h2
             className="text-xl font-bold truncate max-w-sm"
             title={dailyPuzzle.title}
@@ -41,7 +41,8 @@ const HomePuzzleOfDay = async () => {
             {dailyPuzzle.attribution.source}
           </a>
         </div>
-        <div className="flex flex-col sm:flex-row mt-6 lg:mt-0 gap-2">
+
+        <div className="flex flex-row mt-6 gap-2">
           <Link
             href={`/puzzle/${dailyPuzzle.slug}`}
             className="btn btn-primary uppercase transform transition-transform hover:scale-110 hover:shadow-lg"

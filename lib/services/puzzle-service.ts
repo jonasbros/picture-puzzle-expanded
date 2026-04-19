@@ -24,6 +24,7 @@ export interface IPuzzleService {
   searchPuzzles(query: string): Promise<Puzzle[]>;
   getDailyPuzzle(): Promise<Puzzle | null>;
   getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null>;
+  getPreviousDailyPuzzles(page: number, limit: number): Promise<{ data: DailyPuzzle[]; total: number }>;
   validatePuzzleExists(id: string): Promise<Puzzle>;
 }
 
@@ -105,6 +106,12 @@ export class PuzzleService implements IPuzzleService {
 
   async getDailyPuzzleWithCountdown(): Promise<DailyPuzzle | null> {
     return await this.repository.getDailyPuzzleWithCountdown();
+  }
+
+  async getPreviousDailyPuzzles(page: number, limit: number): Promise<{ data: DailyPuzzle[]; total: number }> {
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(1, limit), 50);
+    return await this.repository.getPreviousDailyPuzzles(safePage, safeLimit);
   }
 
   async validatePuzzleExists(id: string): Promise<Puzzle> {
