@@ -12,7 +12,13 @@ const HomePreviousDays = async ({ page }: Props) => {
   const t = await getTranslations();
   const { data: puzzles, total, error } = await getPreviousDailyPuzzles(page);
 
-  if (error) return <div>{t("common.errors.generic")}</div>;
+  if (error) {
+    return (
+      <div role="alert" className="alert alert-error">
+        <span>{t("common.errors.generic")}</span>
+      </div>
+    );
+  }
 
   const totalPages = Math.ceil((total ?? 0) / LIMIT);
   const hasPrev = page > 1;
@@ -22,14 +28,14 @@ const HomePreviousDays = async ({ page }: Props) => {
     <div className="flex flex-col h-full gap-4">
       <h2 className="text-xl font-bold uppercase">Previous Days</h2>
 
-      <ul className="flex flex-col gap-2 flex-1">
+      <ul className="menu menu-md w-full flex-1 p-0 flex-nowrap">
         {puzzles?.map((daily) => (
-          <li key={daily.id}>
+          <li key={daily.id} className="flex-1">
             <Link
               href={`/puzzle/${daily.puzzle?.slug}`}
-              className="flex items-center justify-between gap-2 p-2 rounded-lg hover:bg-base-100 transition-colors"
+              className="flex items-center justify-between h-full"
             >
-              <span className="font-medium truncate">{daily.puzzle?.title}</span>
+              <span className="truncate">{daily.puzzle?.title}</span>
               <span className="text-sm text-base-content/60 shrink-0">
                 {new Date(daily.puzzle_date).toLocaleDateString(undefined, {
                   month: "short",
@@ -42,26 +48,29 @@ const HomePreviousDays = async ({ page }: Props) => {
         ))}
       </ul>
 
-      <div className="flex items-center justify-between pt-2 border-t border-base-content/10">
-        <Link
-          href={`?page=${page - 1}`}
-          className={`btn btn-sm btn-ghost ${!hasPrev ? "btn-disabled" : ""}`}
-          aria-disabled={!hasPrev}
-          tabIndex={!hasPrev ? -1 : undefined}
-        >
-          ← Prev
-        </Link>
-        <span className="text-sm text-base-content/60">
-          {page} / {totalPages}
-        </span>
-        <Link
-          href={`?page=${page + 1}`}
-          className={`btn btn-sm btn-ghost ${!hasNext ? "btn-disabled" : ""}`}
-          aria-disabled={!hasNext}
-          tabIndex={!hasNext ? -1 : undefined}
-        >
-          Next →
-        </Link>
+
+      <div className="flex items-center justify-between">
+        <div className="join">
+          <Link
+            href={`?page=${page - 1}`}
+            className={`join-item btn btn-sm btn-ghost ${!hasPrev ? "btn-disabled pointer-events-none" : ""}`}
+            aria-disabled={!hasPrev}
+            tabIndex={!hasPrev ? -1 : undefined}
+          >
+            «
+          </Link>
+          <span className="join-item btn btn-sm btn-ghost btn-disabled no-animation cursor-default">
+            {page} / {totalPages}
+          </span>
+          <Link
+            href={`?page=${page + 1}`}
+            className={`join-item btn btn-sm btn-ghost ${!hasNext ? "btn-disabled pointer-events-none" : ""}`}
+            aria-disabled={!hasNext}
+            tabIndex={!hasNext ? -1 : undefined}
+          >
+            »
+          </Link>
+        </div>
       </div>
     </div>
   );
