@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @import "./styles.css";
 @plugin "daisyui" {
-  themes: nord --default, dark --prefersdark;
+  themes:
+    nord --default,
+    dark --prefersdark;
 }
 
 .bento-box {
@@ -62,7 +64,7 @@
 @media (width >= 1280px) {
   .bento-box {
     grid-template-areas:
-      "area-1 area-1 area-5 area-6"
-      "area-2 area-3 area-4 area-4";
+      "area-1 area-1 area-2 area-2"
+      "area-3 area-3 area-5 area-6";
   }
 }
